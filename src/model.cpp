@@ -14,8 +14,7 @@ void Model::draw(Shader& shader, glm::mat4 model)
 void Model::loadModel(const std::string& path)
 {
   Assimp::Importer import;
-  const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate
-                                         | aiProcess_FlipUVs);
+  const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate);
 
   if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
     std::cerr << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
@@ -60,6 +59,11 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
       vector.x = mesh->mNormals[i].x;
       vector.y = mesh->mNormals[i].y;
       vector.z = mesh->mNormals[i].z;
+      vertex.normal = vector;
+    } else {
+      vector.x = 0.0f;
+      vector.y = 0.0f;
+      vector.z = 1.0f; 
       vertex.normal = vector;
     }
 
