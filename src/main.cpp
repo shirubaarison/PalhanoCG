@@ -59,7 +59,9 @@ int main()
   Camera camera(WIDTH, HEIGHT, glm::vec3(3.0f, 2.0f, 3.0f));
 
   // Carregar modelo
-  Model ourModel("../assets/models/cat/12221_Cat_v1_l3.obj");
+  Model ourModel("../assets/models/van/psx_low-poly_camper_van.obj");
+  Model guitar("../assets/models/guitar/psx_low-poly_acoustic_guitar.obj");
+  Model trainer("../assets/models/trainer/elliptical_trainer.obj");
 
   float ang = 0.0f;
   while (!glfwWindowShouldClose(window)) {
@@ -89,17 +91,23 @@ int main()
       ang = 0;
     }
     
-    ang += 3.0f;
+    ang += 1.0f;
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); 
-    model = glm::rotate(model, glm::radians(270.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    model = glm::rotate(model, glm::radians(ang), glm::vec3(0.0f, 0.0f, 1.0f));
-    model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+    // model = glm::rotate(model, glm::radians(270.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    // model = glm::rotate(model, glm::radians(ang), glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
 
-    // shader.setMat4("model", model);
     // Desenhar o modelo
     ourModel.draw(shader, model);
+
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 10.0f)); 
+    guitar.draw(shader, model);
+
+
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 10.0f)); 
+    trainer.draw(shader, model);
     
     glfwSwapBuffers(window);
     glfwPollEvents();
