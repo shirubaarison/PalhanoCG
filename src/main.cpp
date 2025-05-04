@@ -59,9 +59,7 @@ int main()
   Camera camera(WIDTH, HEIGHT, glm::vec3(3.0f, 2.0f, 3.0f));
 
   // Carregar modelo
-  Model ourModel("../assets/models/van/psx_low-poly_camper_van.obj");
-  Model guitar("../assets/models/guitar/psx_low-poly_acoustic_guitar.obj");
-  Model trainer("../assets/models/trainer/elliptical_trainer.obj");
+  Model guitar("../assets/models/miku/miku_brazilian_fbx__rig(2).obj");
 
   float ang = 0.0f;
   while (!glfwWindowShouldClose(window)) {
@@ -91,7 +89,7 @@ int main()
       ang = 0;
     }
     
-    ang += 1.0f;
+    ang += 6.0f;
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); 
@@ -100,15 +98,8 @@ int main()
     model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
 
     // Desenhar o modelo
-    ourModel.draw(shader, model);
-
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 10.0f)); 
     guitar.draw(shader, model);
 
-
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 10.0f)); 
-    trainer.draw(shader, model);
-    
     glfwSwapBuffers(window);
     glfwPollEvents();
   }

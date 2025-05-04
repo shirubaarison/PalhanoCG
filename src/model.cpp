@@ -70,13 +70,12 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
     // Texturas
     if (mesh->mTextureCoords[0]) {
       glm::vec2 vec;
-
       // assumindo que não vão ter várias texturas pra um vértice
       vec.x = mesh->mTextureCoords[0][i].x;
       vec.y = mesh->mTextureCoords[0][i].y;
       vertex.texCoords = vec;
     } else {
-      vertex.texCoords = glm::vec2(0.0f, 0.0f); // deixa preto se não houver textura
+      vertex.texCoords = glm::vec2(1.0f, 0.0f); 
     }
 
     vertices.push_back(vertex);
@@ -109,19 +108,19 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 
 std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
 {
-  std::vector<Texture> textures;
+  std::vector<Texture> load_textures;
 
   for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
     aiString str;
     
     mat->GetTexture(type, i, &str);
-
     bool skip = false;
     for (unsigned int j = 0; j < textures_loaded.size(); j++) {
       std::string path = this->directory + '/' + str.C_Str();
+      
       if (std::strcmp(textures_loaded[j].path.data(), path.c_str()) == 0) {
         // Se ja tá carregada
-        textures.push_back(textures_loaded[j]);
+        load_textures.push_back(textures_loaded[j]);
         skip = true;
         break;
       }
@@ -130,9 +129,9 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
       // Adicionar a textura 
       std::string path = this->directory + '/' + str.C_Str();
       Texture texture(path.c_str(), typeName.c_str(), textures_loaded.size());
-      textures.push_back(texture);
+      load_textures.push_back(texture);
       textures_loaded.push_back(texture);
     }
   }
-  return textures;
+  return load_textures;
 }

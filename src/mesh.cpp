@@ -32,8 +32,6 @@ void Mesh::draw(Shader& shader, glm::mat4 model)
 	shader.activate();
 	vao.bind();
 
-  // Por enquanto será apenas de difusse
-  // TODO: adicionar specular lightning
   unsigned int numDiffuse = 0;
   unsigned int numSpecular = 0;
 	for (unsigned int i = 0; i < textures.size(); i++)
