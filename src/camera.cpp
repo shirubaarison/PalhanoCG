@@ -4,14 +4,6 @@
 Camera::Camera(int width, int height, glm::vec3 position)
     : width(width), height(height), position(position) {}
 
-void Camera::updateMatrix(float FOVdeg, float nearPlane, float farPlane)
-{
-  glm::mat4 view = glm::lookAt(position, position + orientation, up);
-  projection = glm::perspective(glm::radians(FOVdeg), static_cast<float>(width) / height, nearPlane, farPlane);
-
-  cameraMatrix = projection * view;
-}
-
 void Camera::matrix(Shader& shader, const char* uniform)
 {
   glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
@@ -22,8 +14,9 @@ glm::mat4 Camera::getViewMatrix()
   return glm::lookAt(position, position + orientation, up);
 }
 
-void Camera::inputs(GLFWwindow* window)
+void Camera::inputs(GLFWwindow* window, float deltaTime)
 {
+  this->deltaTime = deltaTime;
   processKeyboard(window);
   processMouse(window);
 }
@@ -34,7 +27,7 @@ void Camera::processKeyboard(GLFWwindow* window)
 
   const glm::vec3 actualUp = glm::normalize(glm::cross(right, orientation));
 
-  float currentSpeed = speed;
+  float currentSpeed = speed * deltaTime;
   if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
     currentSpeed *= sprintMultiplier;
 
