@@ -14,9 +14,8 @@ class Camera {
 public:
   Camera(int width, int height, glm::vec3 position);
 
-  void updateMatrix(float FOVdeg, float nearPlane, float farPlane);
   void matrix(Shader& shader, const char* uniform);
-  void inputs(GLFWwindow* window);
+  void inputs(GLFWwindow* window, float deltaTime);
   
   glm::mat4 getProjectionMatrix() const;
   glm::mat4 getViewMatrix();
@@ -25,6 +24,7 @@ public:
 private:
   int width;
   int height;
+  float deltaTime;
 
   glm::vec3 position;
   glm::vec3 orientation = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -37,10 +37,10 @@ private:
   
   float yaw = -90.0f;
   float pitch = 0.0f;
-  float speed = 0.05f;
+  float speed = 5.0f;
   
-  const float baseSpeed = 0.05f;
-  const float sprintMultiplier = 2.0f;
+  const float baseSpeed = 1.0f;
+  const float sprintMultiplier = 4.0f;
   const float sensitivity = 0.1f;   
   const float maxVerticalAngle = 89.0f;
 
