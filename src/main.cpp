@@ -10,6 +10,7 @@
 #include "shader.hpp"
 #include "terrain.hpp"
 #include "textRenderer.hpp"
+#include "skybox.hpp"
 
 #define UNUSED(x) (void)(x) // só pra evitar avisos de variável não utilizada
 
@@ -60,6 +61,7 @@ int main()
   Shader shader("../shaders/default.vs.glsl", "../shaders/default.fs.glsl");
   Shader terrainShader("../shaders/terrain.vs.glsl", "../shaders/terrain.fs.glsl");
   Shader fontShader("../shaders/font.vs.glsl", "../shaders/font.fs.glsl");
+  Shader skyboxShader("../shaders/skybox.vs.glsl", "../shaders/skybox.fs.glsl");
 
   // Carregar camera
   Camera camera(WIDTH, HEIGHT, glm::vec3(3.0f, 15.0f, 3.0f));
@@ -78,6 +80,9 @@ int main()
   fontShader.activate();
   glm::mat4 textProjection = glm::ortho(0.0f, (float)WIDTH, 0.0f, (float)HEIGHT);
   fontShader.setMat4("projection", textProjection);
+
+  // skybox
+  Skybox skybox("../skybox");
 
   float deltaTime = 0.0f;
   float lastFrame = 0.0f;
@@ -102,16 +107,23 @@ int main()
     }
 
     camera.inputs(window, deltaTime);
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100000.0f);
+    glm::mat4 skyboxView = glm::mat4(glm::mat3(camera.getViewMatrix()));
+
+    skyboxShader.activate();
+    skyboxShader.setMat4("projection", projection);
+    skyboxShader.setMat4("view", skyboxView);
+    skybox.render(skyboxShader);
+
     // Ativar classe de shader
     shader.activate();
 
     shader.setVec3("lightPos", glm::vec3(5.0f, 3.0f, 1.0f));
     shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100000.0f);
     glm::mat4 view = camera.getViewMatrix();
 
     shader.setMat4("projection", projection);
@@ -148,6 +160,7 @@ int main()
     
     textRenderer.renderText(fontShader, fpsText, 25.0f, HEIGHT - 50.0f, 0.5f, glm::vec3(1.0f, 1.0f, 1.0f));
     
+       
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
