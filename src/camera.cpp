@@ -45,6 +45,10 @@ void Camera::processKeyboard(GLFWwindow* window)
     position += currentSpeed * actualUp;
   if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
     position -= currentSpeed * actualUp;
+
+  if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+    this->baseSpeed = 0.1f;
+  }
 }
 
 void Camera::processMouse(GLFWwindow* window)

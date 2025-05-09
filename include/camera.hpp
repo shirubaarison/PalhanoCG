@@ -39,7 +39,7 @@ private:
   float pitch = 0.0f;
   float speed = 5.0f;
   
-  const float baseSpeed = 1.0f;
+  float baseSpeed = 1.0f;
   const float sprintMultiplier = 4.0f;
   const float sensitivity = 0.1f;   
   const float maxVerticalAngle = 89.0f;

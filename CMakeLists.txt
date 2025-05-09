@@ -53,6 +53,18 @@ set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_SAMPLES OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(assimp)
 
+# FreeType
+FetchContent_Declare(
+  freetype
+  GIT_REPOSITORY https://github.com/freetype/freetype.git
+  GIT_TAG VER-2-13-3
+)
+set(FT_WITH_ZLIB OFF CACHE BOOL "" FORCE)
+set(FT_WITH_PNG OFF CACHE BOOL "" FORCE)
+set(FT_WITH_BZIP2 OFF CACHE BOOL "" FORCE)
+set(FT_WITH_HARFBUZZ OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(freetype)
+
 # Source files
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
 file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS include/*.h)
@@ -70,6 +82,7 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE glm
   PRIVATE assimp
   PRIVATE glad
+  PRIVATE freetype
 )
 
 # Warnings
