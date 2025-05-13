@@ -14,7 +14,7 @@ public:
   Terrain(const std::string& path, int width, int length);
   bool loadHeightMap(const std::string& path);
   void loadTexture(const std::string& texturePath);
-  void draw();
+  void draw(Shader& shader);
 
   GLuint vao, vbo, ebo, textureID;
 private:

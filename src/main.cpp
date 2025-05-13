@@ -70,7 +70,7 @@ int main()
   Model miku("../assets/models/miku/miku_brazilian_fbx__rig(2).obj");
   
   Terrain terrain("../assets/heightmaps/iceland_heightmap.png", 2624, 1756);
-  // terrain.loadTexture("../assets/models/heightmap/tungtung.jpg");
+  // terrain.loadTexture("../assets/heightmaps/tungtung.jpg");
 
   // para fontes
   glEnable(GL_BLEND);
@@ -152,7 +152,7 @@ int main()
     terrainShader.setMat4("view", view);
     terrainShader.setMat4("model", terrainModel);
     
-    terrain.draw();
+    terrain.draw(terrainShader);
     
     std::stringstream ss;
     ss << "FPS: " << std::fixed << std::setprecision(1) << fps;

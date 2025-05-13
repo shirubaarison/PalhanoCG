@@ -22,6 +22,7 @@ bool Terrain::loadHeightMap(const std::string& path)
   
   // popular vertices
   std::vector<float> vertices;
+  std::vector<float> texCoords;
   float yScale = 64.0f / 256.0f, yShift = 16.0f;
   for (int i = 0; i < height; i++) {
     for (int j = 0; j < width; j++) {
@@ -31,6 +32,9 @@ bool Terrain::loadHeightMap(const std::string& path)
       vertices.push_back(-height/2.0f + i);            // v.x
       vertices.push_back( (int) y * yScale - yShift);  // v.y (elevação da mesh)
       vertices.push_back(-width/2.0f + j);             // v.z
+      
+      texCoords.push_back(static_cast<float>(j) / (width - 1));   // u
+      texCoords.push_back(static_cast<float>(i) / (height - 1));  // v
     }
   }
 
@@ -57,9 +61,12 @@ bool Terrain::loadHeightMap(const std::string& path)
                &vertices[0],
                GL_STATIC_DRAW);
 
-  // posição
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  // positions
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
   glEnableVertexAttribArray(0);
+  // texcoords
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+  glEnableVertexAttribArray(1);
 
   glGenBuffers(1, &ebo);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
@@ -104,8 +111,13 @@ void Terrain::loadTexture(const std::string& path)
   stbi_image_free(data);
 }
 
-void Terrain::draw() 
+void Terrain::draw(Shader& shader) 
 {
+  shader.activate();
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, textureID);
+  glUniform1i(glGetUniformLocation(shader.ID, "terrainTex"), 0);
+
   // draw mesh
   glBindVertexArray(vao);
   // render 
