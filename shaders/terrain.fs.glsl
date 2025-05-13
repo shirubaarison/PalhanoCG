@@ -1,7 +1,10 @@
 #version 330 core
 out vec4 FragColor;
 
+in vec2 TexCoord;
 in float Height;
+
+uniform sampler2D terrainTex;
 
 void main()
 {
@@ -9,5 +12,5 @@ void main()
 
   float alpha = (h <= 0.1f) ? 0.0 : 1.0;
 
-  FragColor = vec4(h, h, h, alpha);
+  FragColor = texture(terrainTex, TexCoord);
 }
