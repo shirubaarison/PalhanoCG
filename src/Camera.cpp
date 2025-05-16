@@ -2,7 +2,11 @@
 #include "GLFW/glfw3.h"
 
 Camera::Camera(int width, int height, glm::vec3 position)
-    : width(width), height(height), position(position) {}
+{
+  this->width = width;
+  this->height = height;
+  this->position = position;
+}
 
 void Camera::matrix(Shader& shader, const char* uniform)
 {
@@ -11,12 +15,19 @@ void Camera::matrix(Shader& shader, const char* uniform)
 
 glm::mat4 Camera::getViewMatrix()
 {
-  return glm::lookAt(position, position + orientation, up);
+  glm::mat4 view = glm::lookAt(position, position + orientation, up); 
+  
+  if (projectionType == ProjectionType::Orthographic) {
+    view = glm::lookAt(glm::vec3(10.0f, 10.0f, 15.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    view = glm::translate(view, -position);
+    view = glm::rotate(view, glm::radians(rotationAngle), glm::vec3(0, 1, 0));
+  }
+
+  return view;
 }
 
-void Camera::inputs(GLFWwindow* window, float deltaTime)
+void Camera::inputs(GLFWwindow* window)
 {
-  this->deltaTime = deltaTime;
   processKeyboard(window);
   processMouse(window);
 }
@@ -27,35 +38,58 @@ void Camera::processKeyboard(GLFWwindow* window)
 
   const glm::vec3 actualUp = glm::normalize(glm::cross(right, orientation));
 
-  float currentSpeed = speed * deltaTime;
-  if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-    currentSpeed *= sprintMultiplier;
+  // Perspectiva
+  if (projectionType == ProjectionType::Perspective) {
+    // Dash
+    float currentSpeed = speed;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+      currentSpeed *= sprintMultiplier;
 
-  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    position += currentSpeed * orientation;
-  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    position -= currentSpeed * orientation;
+    // Frente e atrás
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+      position += currentSpeed * orientation;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+      position -= currentSpeed * orientation;
 
-  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    position -= currentSpeed * right;
-  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    position += currentSpeed * right;
+    // Esquerda e direita
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+      position -= currentSpeed * right;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+      position += currentSpeed * right;
 
-  if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-    position += currentSpeed * actualUp;
-  if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-    position -= currentSpeed * actualUp;
-
-  if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-    this->baseSpeed = 0.1f;
+    // Voar ou ir pra baixo
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+      position += currentSpeed * actualUp;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+      position -= currentSpeed * actualUp;
   }
+
+  // Ortho
+  if (projectionType == ProjectionType::Orthographic) {
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+      rotationAngle += rotationSpeed;
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+      rotationAngle -= rotationSpeed;
+  }
+
+  // Trocar tipo de câmera
+  if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS && !useOrtho) {
+    useOrtho = true;
+    if (projectionType == ProjectionType::Perspective)
+      projectionType = ProjectionType::Orthographic;
+    else
+      projectionType = ProjectionType::Perspective;
+  }
+  
+  if (glfwGetKey(window, GLFW_KEY_C) == GLFW_RELEASE)
+    useOrtho = false;
 }
 
 void Camera::processMouse(GLFWwindow* window)
 {
-  if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)  {
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);   // Desabilitar cursor
-    
+  // Desabilitar cursor
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && projectionType == ProjectionType::Perspective)  {
     if (firstClick) {
       glfwSetCursorPos(window, (float)width / 2, (float)height / 2); // Colocar no meio
       firstClick = false;
@@ -87,5 +121,11 @@ void Camera::processMouse(GLFWwindow* window)
   }
 }
 
-glm::mat4 Camera::getProjectionMatrix() const { return projection; }
+glm::mat4 Camera::getProjectionMatrix() const 
+{ 
+  if (projectionType == ProjectionType::Perspective)
+    return glm::perspective(glm::radians(45.0f), (float)width / height, 0.1f, 1000.0f);
+  else
+    return glm::ortho(-10.0f, 10.0f, -10.0f * height / width, 10.0f * height / width, 0.1f, 1000.0f);
+}
 glm::vec3 Camera::getPosition() const { return position; }

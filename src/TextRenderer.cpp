@@ -89,7 +89,7 @@ bool TextRenderer::init(const std::string& fontPath, unsigned int fontSize)
 
 void TextRenderer::renderText(Shader& shader, std::string text, float x, float y, float scale, glm::vec3 color)
 {
-  shader.activate();
+  shader.use();
   
   glDisable(GL_DEPTH_TEST);
   glUniform3f(glGetUniformLocation(shader.ID, "textColor"), color.x, color.y, color.z);

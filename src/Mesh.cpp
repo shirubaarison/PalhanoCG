@@ -29,7 +29,7 @@ Mesh::Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::v
 
 void Mesh::draw(Shader& shader, glm::mat4 model) 
 {
-	shader.activate();
+	shader.use();
 	vao.bind();
 
   unsigned int numDiffuse = 0;

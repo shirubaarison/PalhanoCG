@@ -50,7 +50,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
   glLinkProgram(ID);
   checkCompileErrors(ID, "PROGRAM");
 
-  std::cout << "[SHADER_CLASS] Shaders" << vertexPath << " & " 
+  std::cout << "[SHADER_CLASS] Shaders " << vertexPath << " & " 
     << fragmentPath  << " compilados e linkados com sucesso." << std::endl;
 
   // delete
@@ -63,7 +63,7 @@ void Shader::Delete()
   glUseProgram(0);
 }
 
-void Shader::activate() 
+void Shader::use() 
 {
   glUseProgram(ID);
 }

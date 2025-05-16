@@ -54,7 +54,7 @@ void Texture::Delete()
 
 void Texture::texUnit(Shader& shader, const char* uniform, GLuint unit)
 {
-  shader.activate();
+  shader.use();
   glUniform1i(glGetUniformLocation(shader.ID, uniform), unit);
   glActiveTexture(GL_TEXTURE0 + unit);
   glBindTexture(GL_TEXTURE_2D, this->ID);

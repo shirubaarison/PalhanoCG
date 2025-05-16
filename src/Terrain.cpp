@@ -112,7 +112,7 @@ void Terrain::loadTexture(const std::string& path)
 
 void Terrain::draw(Shader& shader) 
 {
-  shader.activate();
+  shader.use();
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, textureID);

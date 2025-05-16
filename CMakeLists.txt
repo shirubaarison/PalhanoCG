@@ -28,7 +28,7 @@ set(GLFW_BUILD_X11 ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(glfw)
 
 # GLAD
-add_library(glad src/glad.c)
+add_library(glad src/glad/glad.c)
 target_include_directories(glad PUBLIC include)
 
 # GLM
