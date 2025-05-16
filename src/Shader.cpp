@@ -1,4 +1,4 @@
-#include <shader.hpp>
+#include <Shader.hpp>
 
 std::string Shader::get_file_contents(const std::string& path) {
   std::string result = "";

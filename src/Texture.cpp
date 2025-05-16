@@ -1,4 +1,4 @@
-#include "texture.hpp"
+#include "Texture.hpp"
 
 Texture::Texture(const char* imagePath, const char* texType, GLuint slot)
 : type(texType), unit(slot), path(imagePath)

@@ -7,7 +7,7 @@
 #include <iostream>
 #include <map>
 
-#include "shader.hpp"
+#include "Shader.hpp"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H  

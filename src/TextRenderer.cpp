@@ -1,6 +1,6 @@
-#include "textRenderer.hpp"
+#include "TextRenderer.hpp"
 #include "freetype/freetype.h"
-#include "shader.hpp"
+#include "Shader.hpp"
 
 TextRenderer::TextRenderer(const std::string& fontPath)
 {

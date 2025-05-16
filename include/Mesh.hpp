@@ -9,10 +9,10 @@
 
 #include <cgltf.h>
 
-#include "vao.hpp"
-#include "ebo.hpp"
-#include "texture.hpp"
-#include "shader.hpp"
+#include "Vao.hpp"
+#include "Ebo.hpp"
+#include "Texture.hpp"
+#include "Shader.hpp"
 
 class Mesh
 {

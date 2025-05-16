@@ -1,4 +1,4 @@
-#include "vao.hpp"
+#include "Vao.hpp"
 
 VAO::VAO()
 {
