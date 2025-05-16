@@ -17,7 +17,7 @@
 // Configuração da janela
 const unsigned int WIDTH = 1200;
 const unsigned int HEIGHT = 720;
-const char* TITLE = "Untitled Game";
+const char* TITLE = "TrabalhoCG";
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
@@ -58,29 +58,37 @@ int main()
   glEnable(GL_DEPTH_TEST);
   
   // Build e compilar shaders  
-  Shader shader("../shaders/basic.vs.glsl", "../shaders/basic.fs.glsl");
+  // Shader shader("assets/shaders/basic.vs.glsl", "assets/shaders/basic.fs.glsl");
+  Shader shader("assets/shaders/default.vs.glsl", "assets/shaders/default.fs.glsl");
 
-  // Carregar camera
-  Camera camera(WIDTH, HEIGHT, glm::vec3(3.0f, 15.0f, 3.0f));
+  // Camera
+  Camera camera(WIDTH, HEIGHT, glm::vec3(3.0f, 3.0f, 5.0f));  
+
+  // Modelo
+  Model miku("assets/models/miku/miku_brazilian_fbx__rig(2).obj");
 
   while (!glfwWindowShouldClose(window)) {
     glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100000.0f);
-
-    shader.activate();
-
-    glm::mat4 view = camera.getViewMatrix();
-
-    shader.setMat4("projection", projection);
-    shader.setMat4("view", view);
-    shader.setVec3("viewPos", camera.getPosition());
+    shader.use();
 
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::scale(model, glm::vec3(100.0f, 100.0f, 100.0f));
-       
+    model = glm::scale(model, glm::vec3(5.0f, 5.0f, 5.0f));
+
+    shader.setMat4("projection", camera.getProjectionMatrix());
+    shader.setMat4("view", camera.getViewMatrix());
+    shader.setMat4("model", model);
+
+    shader.setVec3("lightPos", glm::vec3(5.0f, 5.0f, 5.0f));
+    shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+    shader.setVec3("viewPos", camera.getPosition());
+
+    miku.draw(shader, model);
+
+    camera.inputs(window);
+
     glfwSwapBuffers(window);
     glfwPollEvents();
   }

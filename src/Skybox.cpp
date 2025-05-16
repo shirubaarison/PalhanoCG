@@ -101,7 +101,7 @@ unsigned int Skybox::loadCubemap(std::vector<std::string> faces)
 void Skybox::render(Shader& shader)
 {
   glDepthMask(GL_FALSE);
-  shader.activate();
+  shader.use();
   glBindVertexArray(vao);
   glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
   glDrawArrays(GL_TRIANGLES, 0, 36);

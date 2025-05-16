@@ -17,7 +17,7 @@ public:
   Shader(const char* vertexPath, const char* fragmentPath);
   
   void Delete();
-  void activate();
+  void use();
 
   // helper function to read files and return content as c string
   static std::string get_file_contents(const std::string& path);
