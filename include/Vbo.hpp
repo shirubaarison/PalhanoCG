@@ -1,7 +1,7 @@
 #ifndef VBO_CLASS_H
 #define VBO_CLASS_H
 
-#include "shader.hpp"
+#include "Shader.hpp"
 #include "glm/glm.hpp"
 #include <vector>
 

@@ -1,4 +1,4 @@
-#include "model.hpp"
+#include "Model.hpp"
 
 Model::Model(const std::string& path) 
 {

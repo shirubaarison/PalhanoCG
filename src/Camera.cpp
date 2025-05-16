@@ -1,4 +1,4 @@
-#include "camera.hpp"
+#include "Camera.hpp"
 #include "GLFW/glfw3.h"
 
 Camera::Camera(int width, int height, glm::vec3 position)

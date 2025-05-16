@@ -5,7 +5,7 @@
 #include <string>
 #include <glad/glad.h>
 #include "stb_image.h"
-#include "shader.hpp"
+#include "Shader.hpp"
 
 class Texture {
 public: 

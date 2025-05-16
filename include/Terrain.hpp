@@ -6,8 +6,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <stb_image.h>
 
-#include "vbo.hpp"
-#include "shader.hpp"
+#include "Vbo.hpp"
+#include "Shader.hpp"
 
 class Terrain {
 public:

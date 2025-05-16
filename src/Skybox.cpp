@@ -1,4 +1,4 @@
-#include "skybox.hpp"
+#include "Skybox.hpp"
 
 Skybox::Skybox(const std::string& path)
 {

@@ -1,5 +1,5 @@
-#include "shader.hpp"
-#include <vbo.hpp>
+#include "Shader.hpp"
+#include <Vbo.hpp>
 
 VBO::VBO(const std::vector<Vertex>& vertices)
 {

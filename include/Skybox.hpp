@@ -9,7 +9,7 @@
 #include <vector>
 #include <stb_image.h>
 
-#include "shader.hpp"
+#include "Shader.hpp"
 
 class Skybox {
 public:
