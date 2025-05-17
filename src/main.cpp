@@ -10,6 +10,7 @@
 #include "Shader.hpp"
 #include "Terrain.hpp"
 #include "Skybox.hpp"
+#include "errorReporting.hpp"
 
 #define UNUSED(x) (void)(x) // só pra evitar avisos de variável não utilizada
 
@@ -27,10 +28,12 @@ int main()
     return -1;
   }
   
-  // OpenGL versão 3.3 Core profile
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  // OpenGL versão 4.3 Core profile (porque tem info de debug)
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+  glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);  
   
   GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, TITLE, NULL, NULL);
   if (window == NULL) {
@@ -47,7 +50,17 @@ int main()
     std::cerr << "Falha ao inicializar GLAD." << std::endl;
     return -1;
   }
+  int flags;
+  glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+  if (!(flags & GL_CONTEXT_FLAG_DEBUG_BIT)) {
+      std::cerr << "OpenGL context is NOT a debug context.\n";
+  } else {
+      std::cout << "Debug context active.\n";
+  }
   
+  // Habilitar mensagens de erro
+  enableReportGlErrors();
+
   glViewport(0, 0, WIDTH, HEIGHT);
   glEnable(GL_DEPTH_TEST);
   
@@ -65,12 +78,9 @@ int main()
 
   // Skybox
   Skybox skybox("assets/skybox");
-  skyboxShader.use();
-  skyboxShader.setInt("skybox", 0);
 
   // Terreno
-  Terrain terrain("assets/heightmaps/palhano_heightmap.png", 1000, 1000);
-  terrain.loadTexture("assets/heightmaps/areia.jpg");
+  Terrain terrain("assets/heightmaps/palhano_heightmap.png", "assets/heightmaps/mato.jpg", 500, 500);
 
   float deltaTime = 0.0f;
   float lastFrame = 0.0f;
@@ -84,16 +94,6 @@ int main()
     float currentFrame = glfwGetTime();
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
-
-    if (camera.projectionType == ProjectionType::Perspective) {
-      glDepthFunc(GL_LEQUAL);
-      skyboxShader.use();
-      glm::mat4 skyboxView = glm::mat4(glm::mat3(camera.getViewMatrix()));
-      skyboxShader.setMat4("view", skyboxView);
-      skyboxShader.setMat4("projection", camera.getProjectionMatrix());
-      skybox.render(skyboxShader);
-      glDepthFunc(GL_LESS); 
-    }
 
     shader.use();
     shader.setMat4("projection", camera.getProjectionMatrix());
@@ -126,6 +126,16 @@ int main()
     terrainShader.setMat4("model", terrainModel);
 
     terrain.draw(terrainShader);
+
+    if (camera.projectionType == ProjectionType::Perspective) {
+      glDepthFunc(GL_LEQUAL); // fazer que o skybox passe o teste de depth
+      skyboxShader.use();
+      glm::mat4 skyboxView = glm::mat4(glm::mat3(camera.getViewMatrix())); // remover translação dessa matriz
+      skyboxShader.setMat4("view", skyboxView);
+      skyboxShader.setMat4("projection", camera.getProjectionMatrix());
+      skybox.render(skyboxShader);
+      glDepthFunc(GL_LESS); 
+    }
 
     camera.inputs(window, deltaTime);
 

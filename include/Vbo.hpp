@@ -13,7 +13,8 @@ struct Vertex {
 class VBO {
 public:
   GLuint ID;
-  VBO(const std::vector<Vertex>& vertices);
+  VBO(const std::vector<Vertex>& vertices);   // modelos
+  VBO(const std::vector<float>& vertices);    // para skybox e terreno
   void Delete();
   
   void bind() const;

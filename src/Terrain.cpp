@@ -1,26 +1,26 @@
 #include "Terrain.hpp"
 #include "Shader.hpp"
 
-Terrain::Terrain(const std::string& path, int width, int length) 
+Terrain::Terrain(const std::string& path, const std::string& texturePath, int width, int length) 
 {
   this->width = width;
   this->length = length;
-  if (!loadHeightMap(path)) {
-    std::cerr << "Deu erro no terreno" << std::endl;
-  }
+  
+  loadHeightMap(path);
+  // loadTexture(texturePath);
+  this->texture = Texture(texturePath.c_str(), "diffuse", 0);
 }
 
-bool Terrain::loadHeightMap(const std::string& path)
+void Terrain::loadHeightMap(const std::string& path)
 {
   int width, height, nChannels;
   unsigned char *data = stbi_load(path.c_str(), &width, &height, &nChannels, 0);
 
   if (!data) {
     std::cerr << "Falha ao ler HeightMap: " << path << std::endl;
-    return false;
   }
   
-  // popular vertices
+  // VBO
   std::vector<float> vertices;
   float yScale = 64.0f / 256.0f, yShift = 16.0f;
   for (int i = 0; i < height; i++) {
@@ -40,8 +40,8 @@ bool Terrain::loadHeightMap(const std::string& path)
 
   stbi_image_free(data);
 
-  // ebo
-  std::vector<unsigned int> indices;
+  // EBO
+  std::vector<GLuint> indices;
   for (int i = 0; i < height-1; i++) {
     for (int j = 0; j < width; j++) {
       for (int k = 0; k < 2; k++) {
@@ -51,75 +51,28 @@ bool Terrain::loadHeightMap(const std::string& path)
   }
 
   // registrar VAO
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
+  vao.bind();
+  VBO vbo(vertices);
+  EBO ebo(indices);
 
-  glGenBuffers(1, &vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER,
-               vertices.size() * sizeof(float),
-               &vertices[0],
-               GL_STATIC_DRAW);
+  // Posições
+  vao.linkAttrib(vbo, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
+  // TexCoords
+  vao.linkAttrib(vbo, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 
-  // positions
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-  glEnableVertexAttribArray(0);
-  // texcoords
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-  glEnableVertexAttribArray(1);
-
-  glGenBuffers(1, &ebo);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-               indices.size() * sizeof(unsigned int),
-               &indices[0],
-               GL_STATIC_DRAW);
-  
   numStrips = height - 1;
   numVertPerStrip = width * 2;
 
-  return true;
+  vao.unbind();
+  vbo.unbind();
+  ebo.unbind();
 } 
-
-void Terrain::loadTexture(const std::string& path)
-{
-  int width, height, nrChannels;
-  stbi_set_flip_vertically_on_load(true);
-  unsigned char *data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
-
-  if (!data) {
-    std::cerr << "Falha ao carregar textura para o terreno" << std::endl;
-    return;
-  }
-
-  std::cout << "Textura carregada com sucesso " 
-              << width << "x" << height 
-              << ", canais: " << nrChannels << std::endl; 
-
-  glGenTextures(1, &textureID);
-  glBindTexture(GL_TEXTURE_2D, textureID);
-
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-  GLenum format = nrChannels == 4 ? GL_RGBA : GL_RGB;
-  glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-  glGenerateMipmap(GL_TEXTURE_2D);
-
-  stbi_image_free(data);
-}
 
 void Terrain::draw(Shader& shader) 
 {
-  shader.use();
-
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, textureID);
-  glUniform1i(glGetUniformLocation(shader.ID, "terrainTex"), 0);
-
-  glBindVertexArray(vao);
+  shader.use();  
+  vao.bind();
+  texture.bind();
   for(int strip = 0; strip < numStrips; ++strip) {
     glDrawElements(GL_TRIANGLE_STRIP,
                    numVertPerStrip,

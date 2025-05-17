@@ -10,6 +10,8 @@
 #include <stb_image.h>
 
 #include "Shader.hpp"
+#include "Vao.hpp"
+#include "Vbo.hpp"
 
 class Skybox {
 public:
@@ -22,7 +24,7 @@ private:
   unsigned int loadCubemap(std::vector<std::string> faces);
 
   unsigned int cubemapTexture = 0;
-  GLuint vao, vbo;
+  VAO vao;
 
   std::array<std::string, 6> facePaths;
 };

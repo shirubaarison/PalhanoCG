@@ -15,6 +15,7 @@ public:
   std::string path;
 
   Texture(const char* imagePath, const char* texType, GLuint slot);
+  Texture();
   void Delete();
 
   void texUnit(Shader& shader, const char* uniform, GLuint uint);

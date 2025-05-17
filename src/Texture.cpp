@@ -47,6 +47,8 @@ Texture::Texture(const char* imagePath, const char* texType, GLuint slot)
   std::cout << "Unit: " << std::to_string(unit) << std::endl;
 }
 
+Texture::Texture() {}
+
 void Texture::Delete()
 {
   glDeleteTextures(1, &ID);
