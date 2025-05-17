@@ -6,7 +6,7 @@ Terrain::Terrain(const std::string& path, int width, int length)
   this->width = width;
   this->length = length;
   if (!loadHeightMap(path)) {
-    std::cerr << "Deu erro no terreno pai" << std::endl;
+    std::cerr << "Deu erro no terreno" << std::endl;
   }
 }
 
@@ -32,8 +32,9 @@ bool Terrain::loadHeightMap(const std::string& path)
       vertices.push_back( (int) y * yScale - yShift);  // v.y (elevação da mesh)
       vertices.push_back(-width/2.0f + j);             // v.z
       
-      vertices.push_back(static_cast<float>(j) / (width - 1));   // u
-      vertices.push_back(static_cast<float>(i) / (height - 1));  // v
+      float repeatFactor = 1024.0f;
+      vertices.push_back(j * repeatFactor / (width - 1));  // u
+      vertices.push_back(i * repeatFactor / (height - 1)); // v
     }
   }
 
@@ -91,9 +92,9 @@ void Terrain::loadTexture(const std::string& path)
     return;
   }
 
-  std::cout << "Texture loaded successfully: " 
+  std::cout << "Textura carregada com sucesso " 
               << width << "x" << height 
-              << ", channels: " << nrChannels << std::endl; 
+              << ", canais: " << nrChannels << std::endl; 
 
   glGenTextures(1, &textureID);
   glBindTexture(GL_TEXTURE_2D, textureID);
@@ -118,9 +119,7 @@ void Terrain::draw(Shader& shader)
   glBindTexture(GL_TEXTURE_2D, textureID);
   glUniform1i(glGetUniformLocation(shader.ID, "terrainTex"), 0);
 
-  // draw mesh
   glBindVertexArray(vao);
-  // render 
   for(int strip = 0; strip < numStrips; ++strip) {
     glDrawElements(GL_TRIANGLE_STRIP,
                    numVertPerStrip,

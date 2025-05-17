@@ -15,10 +15,8 @@ Mesh::Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::v
   // Linkar VBO
   // position (location = 0)
   vao.linkAttrib(vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, position));
-  // normal (location = 1)
-  vao.linkAttrib(vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, normal));
-  // coordenadas das texturas (location = 2) 
-  vao.linkAttrib(vbo, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
+  // coordenadas das texturas (location = 1) 
+  vao.linkAttrib(vbo, 1, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
 
   // Unbind em todos
 	vao.unbind();
@@ -33,16 +31,12 @@ void Mesh::draw(Shader& shader, glm::mat4 model)
 	vao.bind();
 
   unsigned int numDiffuse = 0;
-  unsigned int numSpecular = 0;
 	for (unsigned int i = 0; i < textures.size(); i++)
 	{
 		std::string num;
 		std::string type = textures[i].type;
 		if (type == "diffuse") {
 			num = std::to_string(numDiffuse++);
-    
-		} else if (type == "specular") {
-		    num = std::to_string(numSpecular++);
 		} 
     textures[i].texUnit(shader, (type + num).c_str(), i);
     textures[i].bind();
