@@ -7,8 +7,6 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-#include <cgltf.h>
-
 #include "Vao.hpp"
 #include "Ebo.hpp"
 #include "Texture.hpp"

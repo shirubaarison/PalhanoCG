@@ -3,18 +3,18 @@
 Skybox::Skybox(const std::string& path)
 {
   std::vector<std::string> faces
-    {
-      path + "/right.jpg",
-      path + "/left.jpg",
-      path + "/top.jpg",
-      path + "/bottom.jpg",
-      path + "/front.jpg",
-      path + "/back.jpg"
-    };
+  {
+    path + "/right.jpg",
+    path + "/left.jpg",
+    path + "/top.jpg",
+    path + "/bottom.jpg",
+    path + "/front.jpg",
+    path + "/back.jpg"
+  };
 
   cubemapTexture = loadCubemap(faces);
   
-  float skyboxVertices[] = {       
+  const std::vector<float> skyboxVertices = {       
     -1.0f,  1.0f, -1.0f,
     -1.0f, -1.0f, -1.0f,
     1.0f, -1.0f, -1.0f,
@@ -58,13 +58,12 @@ Skybox::Skybox(const std::string& path)
     1.0f, -1.0f,  1.0f
   };
 
-  glGenVertexArrays(1, &vao);
-  glGenBuffers(1, &vbo);
-  glBindVertexArray(vao);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+  vao.bind();
+  VBO vbo(skyboxVertices);
+  vao.linkAttrib(vbo, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+
+  vao.unbind();
+  vbo.unbind();
 }
 
 unsigned int Skybox::loadCubemap(std::vector<std::string> faces)
@@ -101,10 +100,13 @@ unsigned int Skybox::loadCubemap(std::vector<std::string> faces)
 void Skybox::render(Shader& shader)
 {
   glDepthMask(GL_FALSE);
+  
   shader.use();
-  glBindVertexArray(vao);
+  vao.bind();
+
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
   glDrawArrays(GL_TRIANGLES, 0, 36);
+
   glDepthMask(GL_TRUE);
 }

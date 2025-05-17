@@ -6,17 +6,19 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <stb_image.h>
 
-#include "Vbo.hpp"
 #include "Shader.hpp"
+#include "Vao.hpp"
+#include "Ebo.hpp"
+#include "Texture.hpp"
 
 class Terrain {
 public:
-  Terrain(const std::string& path, int width, int length);
-  bool loadHeightMap(const std::string& path);
-  void loadTexture(const std::string& texturePath);
+  Terrain(const std::string& path, const std::string& texturePath, int width, int length);
+  void loadHeightMap(const std::string& path);
   void draw(Shader& shader);
 
-  GLuint vao, vbo, ebo, textureID;
+  Texture texture;
+  VAO vao;
 private:
   int width, length, numStrips, numVertPerStrip;
   std::vector<float> heights;

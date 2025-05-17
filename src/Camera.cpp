@@ -22,7 +22,9 @@ glm::mat4 Camera::getViewMatrix()
   
   if (projectionType == ProjectionType::Orthographic) {
     // arrumar isso depois
-    view = glm::lookAt(glm::vec3(10.0f, 10.0f, 15.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    view = glm::lookAt(glm::vec3(10.0f, 10.0f, 15.0f), 
+                        glm::vec3(0.0f, 0.0f, 0.0f), 
+                        glm::vec3(0.0f, 1.0f, 0.0f));
     view = glm::translate(view, -position);
     view = glm::rotate(view, glm::radians(rotationAngle), glm::vec3(0, 1, 0));
   }
@@ -108,14 +110,14 @@ void Camera::processMouse(GLFWwindow* window)
       firstClick = false;
     }
 
+    double mouseX, mouseY;
+    glfwGetCursorPos(window, &mouseX, &mouseY);
+
+    float offsetX = static_cast<float>(mouseX - (float)width / 2);
+    float offsetY = static_cast<float>(mouseY - (float)height / 2);
+    
     if (projectionType == ProjectionType::Perspective)
     {
-      double mouseX, mouseY;
-      glfwGetCursorPos(window, &mouseX, &mouseY);
-
-      float offsetX = static_cast<float>(mouseX - (float)width / 2);
-      float offsetY = static_cast<float>(mouseY - (float)height / 2);
-
       yaw += offsetX * sensitivity;
       pitch -= offsetY * sensitivity;  
 
@@ -128,6 +130,11 @@ void Camera::processMouse(GLFWwindow* window)
       newOrientation.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
 
       front = glm::normalize(newOrientation);
+    }
+
+    if (projectionType == ProjectionType::Orthographic) {
+      orthoZoomLevel += offsetY * 0.05f;
+      orthoZoomLevel = glm::clamp(orthoZoomLevel, 1.0f, 100.0f);
     }
     glfwSetCursorPos(window, (float)width / 2, (float)height / 2);
   } else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
@@ -155,8 +162,11 @@ void Camera::updateCameraVectors()
 glm::mat4 Camera::getProjectionMatrix() const 
 { 
   if (projectionType == ProjectionType::Perspective)
-    return glm::perspective(glm::radians(45.0f), (float)width / height, 0.1f, 1000.0f);
-  else
-    return glm::ortho(-10.0f, 10.0f, -10.0f * height / width, 10.0f * height / width, 0.1f, 1000.0f);
+    return glm::perspective(glm::radians(45.0f), (float)width / height, 0.1f, 200.0f);
+  else {
+    float aspect = (float)width / height;
+    float size = orthoZoomLevel;
+    return glm::ortho(-size * aspect, size * aspect, -size, size, 0.1f, 200.0f);
+  }
 }
 glm::vec3 Camera::getPosition() const { return position; }

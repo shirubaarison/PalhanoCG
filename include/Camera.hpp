@@ -33,9 +33,7 @@ public:
   bool useOrtho = false; // usar perspectiva por padrão
   ProjectionType projectionType = ProjectionType::Perspective;
   
-  // Para a camera ortografica
-  float rotationAngle = 0.0f;
-  float rotationSpeed = 1.0f;
+  
 private:
   int width;
   int height;
@@ -65,6 +63,11 @@ private:
   // sensibilidade e limitação do ângulo vertical
   const float sensitivity = 0.1f;   
   const float maxVerticalAngle = 89.0f; // evitar alinhamento de direction com up
+
+  // Para a camera ortografica
+  float rotationAngle = 0.0f;
+  float rotationSpeed = 1.0f;
+  float orthoZoomLevel = 10.0f;
 
   void processKeyboard(GLFWwindow* window, float deltaTime);
   void processMouse(GLFWwindow* window);
