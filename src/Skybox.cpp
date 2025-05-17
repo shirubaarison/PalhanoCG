@@ -13,8 +13,8 @@ Skybox::Skybox(const std::string& path)
     };
 
   cubemapTexture = loadCubemap(faces);
-  float skyboxVertices[] = {
-    // positions          
+  
+  float skyboxVertices[] = {       
     -1.0f,  1.0f, -1.0f,
     -1.0f, -1.0f, -1.0f,
     1.0f, -1.0f, -1.0f,
@@ -103,6 +103,7 @@ void Skybox::render(Shader& shader)
   glDepthMask(GL_FALSE);
   shader.use();
   glBindVertexArray(vao);
+  glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
   glDrawArrays(GL_TRIANGLES, 0, 36);
   glDepthMask(GL_TRUE);
