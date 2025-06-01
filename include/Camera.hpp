@@ -12,7 +12,6 @@
 
 // Dois tipos de camera, ortho e perpsectiva
 enum class ProjectionType { Perspective, Orthographic };
-static bool wireframePressed = false;
 
 class Camera {
 public:
@@ -32,15 +31,15 @@ public:
   bool useWireframe = false;
   bool useOrtho = false; // usar perspectiva por padrão
   ProjectionType projectionType = ProjectionType::Perspective;
-  
-  
+
+  bool wireframePressed = false;
 private:
   int width;
   int height;
 
   // vetores fundamentais da camera
   glm::vec3 position;
-  glm::vec3 front;
+  glm::vec3 target;
   glm::vec3 right;
   glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
   glm::vec3 up;
