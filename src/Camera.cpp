@@ -7,7 +7,7 @@ Camera::Camera(int width, int height, glm::vec3 position)
   this->height = height;
   this->position = position;
   
-  // inicializar front, right e up
+  // inicializar target, right e up
   updateCameraVectors();
 }
 
@@ -18,7 +18,7 @@ void Camera::matrix(Shader& shader, const char* uniform)
 
 glm::mat4 Camera::getViewMatrix()
 {
-  glm::mat4 view = glm::lookAt(position, position + front, up); 
+  glm::mat4 view = glm::lookAt(position, position + target, up); 
   
   if (projectionType == ProjectionType::Orthographic) {
     // arrumar isso depois
@@ -48,9 +48,9 @@ void Camera::processKeyboard(GLFWwindow* window, float deltaTime)
 
     // Frente e atrás
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-      position += currentSpeed * front;
+      position += currentSpeed * target;
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-      position -= currentSpeed * front;
+      position -= currentSpeed * target;
 
     // Esquerda e direita
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
@@ -129,7 +129,7 @@ void Camera::processMouse(GLFWwindow* window)
       newOrientation.y = sin(glm::radians(pitch));
       newOrientation.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
 
-      front = glm::normalize(newOrientation);
+      target = glm::normalize(newOrientation);
     }
 
     if (projectionType == ProjectionType::Orthographic) {
@@ -155,8 +155,8 @@ void Camera::updateCameraVectors()
   front_v = glm::normalize(front_v);
 
   // atualizar vetores ortogonais
-  right = glm::normalize(glm::cross(front, worldUp)); 
-  up = glm::normalize(glm::cross(right, front));
+  right = glm::normalize(glm::cross(target, worldUp)); 
+  up = glm::normalize(glm::cross(right, target));
 }
 
 glm::mat4 Camera::getProjectionMatrix() const 
