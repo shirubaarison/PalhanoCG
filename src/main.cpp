@@ -56,17 +56,22 @@ int main()
 
   glViewport(0, 0, WIDTH, HEIGHT);
   glEnable(GL_DEPTH_TEST);
+
+  // face culling
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_FRONT);
+  glFrontFace(GL_CCW);
   
   // Build e compilar shaders
   Shader shader("assets/shaders/default.vs.glsl", "assets/shaders/default.fs.glsl");
-  Shader skyboxShader("assets/shaders/skybox.vs.glsl", "assets/shaders/skybox.fs.glsl");
+  // Shader skyboxShader("assets/shaders/skybox.vs.glsl", "assets/shaders/skybox.fs.glsl");
   // Shader terrainShader("assets/shaders/terrain.vs.glsl", "assets/shaders/terrain.fs.glsl");
 
   // Camera
   Camera camera(WIDTH, HEIGHT, glm::vec3(3.0f, 5.0f, 5.0f));  
 
   // Modelo
-  Model cat("assets/models/cat/cat_-_ps1_low_poly_rigged.obj");
+  Model backpack("assets/models/backpack/backpack.obj");
   // Model skeleton("assets/models/esqueleto/skeleton_character_psx.obj");
 
   // Skybox
@@ -77,14 +82,14 @@ int main()
 
   // Luz
   glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-  glm::vec3 lightPos = glm::vec3(1.0f, 10.0f, 1.0f);
+  glm::vec3 lightPos = glm::vec3(3.0f, 5.0f, 5.0f);
 
   float deltaTime = 0.0f;
   float lastFrame = 0.0f;
 
   float angle = 0.0f;
   while (!glfwWindowShouldClose(window)) {
-    glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -99,15 +104,15 @@ int main()
     shader.setVec3("lightPos", lightPos);
     shader.setVec3("camPos", camera.getPosition());
 
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+    
     if (angle == 360.0f)
       angle = 0.0f;
-    angle += 3.0;
-    
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 0.5f, 0.0f));
-    model = glm::rotate(model, glm::radians(-6.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-  
-    cat.draw(shader, model);
+    angle += 1.0;
+
+    backpack.draw(shader, model);
     
     // glm::mat4 sk_model = glm::mat4(1.0f);
     // sk_model = glm::translate(sk_model, glm::vec3(4.0f, 3.0f, -1.0f));
@@ -120,7 +125,7 @@ int main()
     // terrainShader.use();
 
     // glm::mat4 terrainModel = glm::mat4(1.0f);
-    // terrainModel = glm::translate(terrainModel, glm::vec3(0.0f, -22.0f, 0.0f));
+    // terrainModel = glm::translate(terrainModel, glm::vec3(0.0f, -30.0f, 0.0f));
     // terrainShader.setMat4("projection", camera.getProjectionMatrix());
     // terrainShader.setMat4("view", camera.getViewMatrix());
     // terrainShader.setMat4("model", terrainModel);
@@ -144,7 +149,8 @@ int main()
   }
   
   shader.Delete();
-  skyboxShader.Delete();
+  // terrainShader.Delete();
+  // skyboxShader.Delete();
     
   glfwDestroyWindow(window);
   glfwTerminate();
