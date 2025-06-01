@@ -14,7 +14,7 @@ void Model::draw(Shader& shader, glm::mat4 model)
 void Model::loadModel(const std::string& path)
 {
   Assimp::Importer import;
-  const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate);
+  const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
   if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
     std::cerr << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
@@ -99,8 +99,8 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
   std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "diffuse");
   textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 
-  // std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "specular");
-  // textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+  std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "specular");
+  textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 
   // cria a mesh e retorna ela  
   return Mesh(vertices, indices, textures);
