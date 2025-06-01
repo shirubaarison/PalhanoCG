@@ -55,17 +55,17 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
     vertex.position = vector;
 
     // Normal
-    // if (mesh->HasNormals()) {
-    //   vector.x = mesh->mNormals[i].x;
-    //   vector.y = mesh->mNormals[i].y;
-    //   vector.z = mesh->mNormals[i].z;
-    //   vertex.normal = vector;
-    // } else {
-    //   vector.x = 0.0f;
-    //   vector.y = 0.0f;
-    //   vector.z = 1.0f; 
-    //   vertex.normal = vector;
-    // }
+    if (mesh->HasNormals()) {
+      vector.x = mesh->mNormals[i].x;
+      vector.y = mesh->mNormals[i].y;
+      vector.z = mesh->mNormals[i].z;
+      vertex.normal = vector;
+    } else {
+      vector.x = 0.0f;
+      vector.y = 0.0f;
+      vector.z = 1.0f; 
+      vertex.normal = vector;
+    }
 
     // Texturas
     if (mesh->mTextureCoords[0]) {
