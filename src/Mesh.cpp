@@ -7,18 +7,20 @@ Mesh::Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::v
 	Mesh::textures = textures;
 
 	vao.bind();
-  // Gerar VBO e linkar os vertices
+	// Gerar VBO e linkar os vertices
 	VBO vbo(vertices);
-  // Gerar EBO e linkar os indices
+	// Gerar EBO e linkar os indices
 	EBO ebo(indices);
 
-  // Linkar VBO
-  // position (location = 0)
-  vao.linkAttrib(vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, position));
-  // coordenadas das texturas (location = 1) 
-  vao.linkAttrib(vbo, 1, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
+	// Linkar VBO
+	// position (location = 0)
+	vao.linkAttrib(vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, position));
+	// normais (location = 1)
+	vao.linkAttrib(vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+	// coordenadas das texturas (location = 2) 
+	vao.linkAttrib(vbo, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
 
-  // Unbind em todos
+	// Unbind em todos
 	vao.unbind();
 	vbo.unbind();
 	ebo.unbind();
