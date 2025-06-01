@@ -7,7 +7,6 @@ Terrain::Terrain(const std::string& path, const std::string& texturePath, int wi
   this->length = length;
   
   loadHeightMap(path);
-  // loadTexture(texturePath);
   this->texture = Texture(texturePath.c_str(), "diffuse", 0);
 }
 
@@ -26,7 +25,7 @@ void Terrain::loadHeightMap(const std::string& path)
   for (int i = 0; i < height; i++) {
     for (int j = 0; j < width; j++) {
       unsigned char *textel = data + (j + width * i) * nChannels;
-      unsigned char y = textel[0];
+      unsigned char y = textel[0]; // valor r do rgb, tanto faz aqui já que é
 
       vertices.push_back(-height/2.0f + i);            // v.x
       vertices.push_back( (int) y * yScale - yShift);  // v.y (elevação da mesh)

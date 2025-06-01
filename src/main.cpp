@@ -50,13 +50,6 @@ int main()
     std::cerr << "Falha ao inicializar GLAD." << std::endl;
     return -1;
   }
-  int flags;
-  glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
-  if (!(flags & GL_CONTEXT_FLAG_DEBUG_BIT)) {
-      std::cerr << "OpenGL context is NOT a debug context.\n";
-  } else {
-      std::cout << "Debug context active.\n";
-  }
   
   // Habilitar mensagens de erro
   enableReportGlErrors();
@@ -67,20 +60,24 @@ int main()
   // Build e compilar shaders
   Shader shader("assets/shaders/default.vs.glsl", "assets/shaders/default.fs.glsl");
   Shader skyboxShader("assets/shaders/skybox.vs.glsl", "assets/shaders/skybox.fs.glsl");
-  Shader terrainShader("assets/shaders/terrain.vs.glsl", "assets/shaders/terrain.fs.glsl");
+  // Shader terrainShader("assets/shaders/terrain.vs.glsl", "assets/shaders/terrain.fs.glsl");
 
   // Camera
   Camera camera(WIDTH, HEIGHT, glm::vec3(3.0f, 5.0f, 5.0f));  
 
   // Modelo
   Model cat("assets/models/cat/cat_-_ps1_low_poly_rigged.obj");
-  Model skeleton("assets/models/esqueleto/skeleton_character_psx.obj");
+  // Model skeleton("assets/models/esqueleto/skeleton_character_psx.obj");
 
   // Skybox
-  Skybox skybox("assets/skybox");
+  // Skybox skybox("assets/skybox");
 
   // Terreno
-  Terrain terrain("assets/heightmaps/palhano_heightmap.png", "assets/heightmaps/mato.jpg", 500, 500);
+  // Terrain terrain("assets/heightmaps/palhano_heightmap.png", "assets/heightmaps/areia.jpg", 500, 500);
+
+  // Luz
+  glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+  glm::vec3 lightPos = glm::vec3(1.0f, 10.0f, 1.0f);
 
   float deltaTime = 0.0f;
   float lastFrame = 0.0f;
@@ -98,6 +95,9 @@ int main()
     shader.use();
     shader.setMat4("projection", camera.getProjectionMatrix());
     shader.setMat4("view", camera.getViewMatrix());
+    shader.setVec4("lightColor", lightColor);
+    shader.setVec3("lightPos", lightPos);
+    shader.setVec3("camPos", camera.getPosition());
 
     if (angle == 360.0f)
       angle = 0.0f;
@@ -109,33 +109,33 @@ int main()
   
     cat.draw(shader, model);
     
-    glm::mat4 sk_model = glm::mat4(1.0f);
-    sk_model = glm::translate(sk_model, glm::vec3(4.0f, 3.0f, -1.0f));
-    sk_model = glm::scale(sk_model, glm::vec3(5.0f, 5.0f, 5.0f));
-    sk_model = glm::rotate(sk_model, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
-    sk_model = glm::rotate(sk_model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    // glm::mat4 sk_model = glm::mat4(1.0f);
+    // sk_model = glm::translate(sk_model, glm::vec3(4.0f, 3.0f, -1.0f));
+    // sk_model = glm::scale(sk_model, glm::vec3(5.0f, 5.0f, 5.0f));
+    // sk_model = glm::rotate(sk_model, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+    // sk_model = glm::rotate(sk_model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
   
-    skeleton.draw(shader, sk_model);
+    // skeleton.draw(shader, sk_model);
 
-    terrainShader.use();
+    // terrainShader.use();
 
-    glm::mat4 terrainModel = glm::mat4(1.0f);
-    terrainModel = glm::translate(terrainModel, glm::vec3(0.0f, -22.0f, 0.0f));
-    terrainShader.setMat4("projection", camera.getProjectionMatrix());
-    terrainShader.setMat4("view", camera.getViewMatrix());
-    terrainShader.setMat4("model", terrainModel);
+    // glm::mat4 terrainModel = glm::mat4(1.0f);
+    // terrainModel = glm::translate(terrainModel, glm::vec3(0.0f, -22.0f, 0.0f));
+    // terrainShader.setMat4("projection", camera.getProjectionMatrix());
+    // terrainShader.setMat4("view", camera.getViewMatrix());
+    // terrainShader.setMat4("model", terrainModel);
 
-    terrain.draw(terrainShader);
+    // terrain.draw(terrainShader);
 
-    if (camera.projectionType == ProjectionType::Perspective) {
-      glDepthFunc(GL_LEQUAL); // fazer que o skybox passe o teste de depth
-      skyboxShader.use();
-      glm::mat4 skyboxView = glm::mat4(glm::mat3(camera.getViewMatrix())); // remover translação dessa matriz
-      skyboxShader.setMat4("view", skyboxView);
-      skyboxShader.setMat4("projection", camera.getProjectionMatrix());
-      skybox.render(skyboxShader);
-      glDepthFunc(GL_LESS); 
-    }
+    // if (camera.projectionType == ProjectionType::Perspective) {
+    //   glDepthFunc(GL_LEQUAL); // fazer que o skybox passe o teste de depth
+    //   skyboxShader.use();
+    //   glm::mat4 skyboxView = glm::mat4(glm::mat3(camera.getViewMatrix())); // remover translação dessa matriz
+    //   skyboxShader.setMat4("view", skyboxView);
+    //   skyboxShader.setMat4("projection", camera.getProjectionMatrix());
+    //   skybox.render(skyboxShader);
+    //   glDepthFunc(GL_LESS); 
+    // }
 
     camera.inputs(window, deltaTime);
 
