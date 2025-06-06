@@ -33,16 +33,19 @@ public:
   ProjectionType projectionType = ProjectionType::Perspective;
 
   bool wireframePressed = false;
+
+  void setWidth(int width);
+  void setHeight(int height);
 private:
   int width;
   int height;
 
   // vetores fundamentais da camera
   glm::vec3 position;
-  glm::vec3 target;
+  glm::vec3 target = glm::vec3(0.0f, 0.0f, -1.0f);
   glm::vec3 right;
-  glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
   glm::vec3 up;
+  glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
   // matrizes calculadas
   glm::mat4 cameraMatrix = glm::mat4(1.0f);

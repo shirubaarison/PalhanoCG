@@ -21,6 +21,8 @@ std::string Shader::get_file_contents(const std::string& path) {
   return result;
 }
 
+Shader::Shader() {}
+
 Shader::Shader(const char* vertexPath, const char* fragmentPath) 
 {
   // extract data

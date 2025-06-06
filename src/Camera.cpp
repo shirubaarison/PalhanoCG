@@ -6,6 +6,8 @@ Camera::Camera(int width, int height, glm::vec3 position)
   this->width = width;
   this->height = height;
   this->position = position;
+
+  this->up = glm::vec3(0.0f, 1.0f, 0.0f);
   
   // inicializar target, right e up
   updateCameraVectors();
@@ -152,7 +154,7 @@ void Camera::updateCameraVectors()
   front_v.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
   front_v.y = sin(glm::radians(pitch));
   front_v.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-  front_v = glm::normalize(front_v);
+  target = glm::normalize(front_v);
 
   // atualizar vetores ortogonais
   right = glm::normalize(glm::cross(target, worldUp)); 
@@ -170,3 +172,13 @@ glm::mat4 Camera::getProjectionMatrix() const
   }
 }
 glm::vec3 Camera::getPosition() const { return position; }
+
+void Camera::setWidth(int width)
+{
+  this->width = width;
+}
+
+void Camera::setHeight(int height)
+{
+  this->height = height;
+}

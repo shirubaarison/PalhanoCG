@@ -14,6 +14,7 @@ public:
   unsigned int ID;
 
   // constructor
+  Shader();
   Shader(const char* vertexPath, const char* fragmentPath);
   
   void Delete();
