@@ -10,6 +10,7 @@
 
 class Model {
 public:
+  Model();
   Model(const std::string& path);
   void draw(Shader& shader, glm::mat4 model);
 

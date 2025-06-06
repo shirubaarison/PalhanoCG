@@ -1,5 +1,7 @@
 #include "Model.hpp"
 
+Model::Model() {}
+
 Model::Model(const std::string& path) 
 {
   loadModel(path);
@@ -14,7 +16,7 @@ void Model::draw(Shader& shader, glm::mat4 model)
 void Model::loadModel(const std::string& path)
 {
   Assimp::Importer import;
-  const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+  const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate);
 
   if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
     std::cerr << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;

@@ -42,8 +42,8 @@ vec4 directLight()
 {
     vec3 lightVec = lightPos - crntPos;
     float dist = length(lightVec);
-    float a = 0.5;
-    float b = 0.2;
+    float a = 0.05;
+    float b = 0.1;
     float inten = 1.0 / (a * dist * dist + b * dist + 1.0);
 
     vec3 normal = normalize(Normal);
@@ -51,18 +51,17 @@ vec4 directLight()
 
     float diffuse = max(dot(normal, lightDir), 0.0);
 
-    float specularStrength = 0.5;
     vec3 viewDir = normalize(camPos - crntPos);
     vec3 reflectDir = reflect(-lightDir, normal);
-
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 8);
-    float specular = spec * specularStrength;
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 8.0);
 
     vec4 texColor = texture(diffuse0, TexCoords);
     float specTex = texture(specular0, TexCoords).r;
-    vec4 ambient = 0.5f * lightColor * texColor;
 
-    return texColor * diffuse * inten + ambient + vec4(lightColor.rgb * specular * specTex * inten, 0.0);
+    vec4 ambient = 0.03 + inten * lightColor * texColor;
+    float specular = spec * specTex * 0.5 * inten;
+
+    return texColor * diffuse * inten + ambient + vec4(lightColor.rgb * specular, texColor.a);
 }
 
 vec4 spotLight()
