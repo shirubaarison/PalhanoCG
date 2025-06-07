@@ -8,20 +8,17 @@ Game::Game()
   : width(1280),
     height(720),
     resourceManager(ResourceManager::getInstance()),
-    window(), 
-		camera(WIDTH, HEIGHT, glm::vec3(0.0f, 3.0f, 0.0f)),
-    mIsRunning(false) {}
+    window(),
+    gIsRunning(false) {}
 
 bool Game::initialize()
 {
 	// Inicializar janelas
 	if (!window.initialize(WIDTH, HEIGHT, TITLE)) {
-		std::cerr << "Erro ao inicializar WindowManager" << std::endl;
+		std::cerr << "Erro ao inicializar Window" << std::endl;
 		return false;
 	}
 
-	mWindow = window.getWindow();
-	
 	// Carregar GLAD
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
     throw std::runtime_error("Falha ao inicializar GLAD");
@@ -36,9 +33,12 @@ bool Game::initialize()
   glFrontFace(GL_CCW);
 
   glViewport(0, 0, WIDTH, HEIGHT);
+
+	// Inicialize o player
+	gPlayer = new Player(WIDTH, HEIGHT, window.getWindow());
 	
 	// Tudo certo
-	mIsRunning = true;
+	gIsRunning = true;
 
 	std::cout << "[OpenGL] OpenGL carregado com sucesso." << std::endl;
 
@@ -47,7 +47,8 @@ bool Game::initialize()
 
 void Game::shutdown()
 {
-	
+	delete gPlayer;
+	gPlayer = nullptr;
 }
 
 void Game::run()
@@ -55,12 +56,10 @@ void Game::run()
 	float deltaTime = 0.0f;
   float mLastFrame = 0.0f;
 	
-	while (mIsRunning && !window.windowShouldClose()) {
+	while (gIsRunning && !window.windowShouldClose()) {
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - mLastFrame;
 		mLastFrame = currentFrame;
-
-		processInput(deltaTime);
 
 		update(deltaTime);
 
@@ -71,20 +70,9 @@ void Game::run()
 	}
 }
 
-void Game::processInput(float deltaTime)
-{
-	camera.inputs(mWindow, deltaTime);
-
-	if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(mWindow, true);
-
-	if (glfwGetKey(mWindow, GLFW_KEY_F) == GLFW_PRESS)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-}
-
 void Game::update(float deltaTime) 
 {
-	
+  gPlayer->update(deltaTime);
 }
 
 void Game::render()
@@ -95,11 +83,11 @@ void Game::render()
 	Shader shader = resourceManager.getShader("default");
 	
 	shader.use();
-	shader.setMat4("projection", camera.getProjectionMatrix());
-	shader.setMat4("view", camera.getViewMatrix());
+	shader.setMat4("projection", gPlayer->getCamera().getProjectionMatrix());
+	shader.setMat4("view", gPlayer->getCamera().getViewMatrix());
 	shader.setVec4("lightColor",  glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	shader.setVec3("lightPos",  glm::vec3(2.0f, 5.0f, 2.0f));
-	shader.setVec3("camPos", camera.getPosition());
+	shader.setVec3("camPos", gPlayer->getCamera().getPosition());
 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));

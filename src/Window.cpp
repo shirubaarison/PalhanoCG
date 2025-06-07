@@ -5,7 +5,10 @@ Window::Window() {}
 
 bool Window::initialize(int width, int height, const char* title)
 {
-	if (!glfwInit()) {
+	this->width = width;
+  this->height = height;
+
+  if (!glfwInit()) {
 		std::cerr << "Falha ao inicializar GLFW." << std::endl;
 		return false;
 	}

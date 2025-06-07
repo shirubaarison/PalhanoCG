@@ -7,9 +7,9 @@
 #include "errorReporting.hpp"
 #include "ResourceManager.hpp"
 #include "Window.hpp"
-#include "Camera.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/common.hpp"
+#include "Player.hpp"
 
 class Game {
 public:
@@ -25,13 +25,11 @@ private:
 
   ResourceManager& resourceManager;
 	Window window;
-	Camera camera; 
 
-	GLFWwindow *mWindow;
+	Player *gPlayer;
 
-	bool mIsRunning;
+	bool gIsRunning;
 
-	void processInput(float deltaTime);
 	void update(float deltaTime);
 	void render();
 };
