@@ -2,9 +2,8 @@
 #include "GLFW/glfw3.h"
 #include <iostream>
 
-Player::Player(int width, int height, GLFWwindow* window)
-  : pInput(window),
-  pCamera(width, height, glm::vec3(0.0f, 1.0f, 5.0f)),     // criar camera
+Player::Player(int width, int height) 
+  : pCamera(width, height, glm::vec3(0.0f, 1.0f, 5.0f)),    // criar camera
   baseSpeed(5.0f),
   sprintMultiplier(2.0f),
   mouseSensitivity(0.1f),
@@ -25,7 +24,7 @@ const Camera& Player::getCamera() const
 void Player::handleKeyboardInput(float deltaTime) 
 {
   float currentSpeed = baseSpeed;
-  if (pInput.isKeyPressed(GLFW_KEY_LEFT_CONTROL)) {
+  if (InputHandler::isKeyPressed(GLFW_KEY_LEFT_CONTROL)) {
     currentSpeed *= sprintMultiplier;
   }
 
@@ -36,45 +35,45 @@ void Player::handleKeyboardInput(float deltaTime)
   const glm::vec3 right = pCamera.getRight(); 
   const glm::vec3 up = pCamera.getUp();
 
-  if (pInput.isKeyPressed(GLFW_KEY_W)) 
+  if (InputHandler::isKeyPressed(GLFW_KEY_W)) 
     position += front * velocity; 
-  if (pInput.isKeyPressed(GLFW_KEY_S))
+  if (InputHandler::isKeyPressed(GLFW_KEY_S))
     position -= front * velocity;
-  if (pInput.isKeyPressed(GLFW_KEY_A))
+  if (InputHandler::isKeyPressed(GLFW_KEY_A))
     position -= right * velocity;
-  if (pInput.isKeyPressed(GLFW_KEY_D))
+  if (InputHandler::isKeyPressed(GLFW_KEY_D))
     position += right * velocity;
-  if (pInput.isKeyPressed(GLFW_KEY_SPACE))
+  if (InputHandler::isKeyPressed(GLFW_KEY_SPACE))
     position += up * velocity;
-  if (pInput.isKeyPressed(GLFW_KEY_LEFT_SHIFT))
+  if (InputHandler::isKeyPressed(GLFW_KEY_LEFT_SHIFT))
     position -= up * velocity;
 
   pCamera.setPosition(position);
 
   // Trocar de camera
-  if (pInput.isKeyPressed(GLFW_KEY_C) && !cameraTypeTogglePressed) {
+  if (InputHandler::isKeyPressed(GLFW_KEY_C) && !cameraTypeTogglePressed) {
     ProjectionType currentType = pCamera.getProjectionType();
     pCamera.setProjectionType(
       currentType == ProjectionType::Perspective ? ProjectionType::Orthographic : ProjectionType::Perspective
     );
     cameraTypeTogglePressed = true;
   }
-  if (pInput.isKeyReleased(GLFW_KEY_C)) {
+  if (InputHandler::isKeyReleased(GLFW_KEY_C)) {
     cameraTypeTogglePressed = false;
   }
 }
 
 void Player::handleMouseInput() 
 {
-  if (pInput.isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
-    pInput.setCursorMode(true); 
+  if (InputHandler::isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+    InputHandler::setCursorMode(true); 
 
     if (firstClick) {
-      pInput.centerCursor();
+      InputHandler::centerCursor();
       firstClick = false;
     }
 
-    glm::vec2 offset = pInput.getMouseOffset();
+    glm::vec2 offset = InputHandler::getMouseOffset();
 
     if (pCamera.getProjectionType() == ProjectionType::Perspective) {
       float yawOffset = offset.x * mouseSensitivity;
@@ -84,7 +83,7 @@ void Player::handleMouseInput()
       pCamera.processZoom(offset.y * 0.05f);
     }
   } else {
-    pInput.setCursorMode(false);  
+    InputHandler::setCursorMode(false);  
     firstClick = true;
   }
 }

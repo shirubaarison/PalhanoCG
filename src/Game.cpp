@@ -5,9 +5,7 @@ unsigned int HEIGHT = 720;
 const char* TITLE = "Trabalho CG";
 
 Game::Game() 
-  : width(1280),
-    height(720),
-    resourceManager(ResourceManager::getInstance()),
+  : resourceManager(ResourceManager::getInstance()),
     window(),
     gIsRunning(false) {}
 
@@ -18,6 +16,9 @@ bool Game::initialize()
 		std::cerr << "Erro ao inicializar Window" << std::endl;
 		return false;
 	}
+
+	// Inicializar inputs
+	InputHandler::initialize(window.getWindow());
 
 	// Carregar GLAD
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -35,7 +36,7 @@ bool Game::initialize()
   glViewport(0, 0, WIDTH, HEIGHT);
 
 	// Inicialize o player
-	gPlayer = new Player(WIDTH, HEIGHT, window.getWindow());
+	gPlayer = new Player(WIDTH, HEIGHT);
 	
 	// Tudo certo
 	gIsRunning = true;
@@ -99,9 +100,9 @@ void Game::render()
 void Game::loadAssets()
 {
 	// Shaders
-	resourceManager.loadShader("default", "../assets/shaders/default.vs.glsl", "../assets/shaders/default.fs.glsl");
+	resourceManager.loadShader("default", "assets/shaders/default.vs.glsl", "assets/shaders/default.fs.glsl");
 
 	// Models
 	// resourceManager.loadModel("backpack", "assets/models/backpack/backpack.obj");
-	resourceManager.loadModel("cat", "../assets/models/cat/cat_-_ps1_low_poly_rigged.obj");
+	resourceManager.loadModel("cat", "assets/models/cat/cat_-_ps1_low_poly_rigged.obj");
 }

@@ -20,9 +20,6 @@ public:
 	void run();
 	void shutdown();
 private:
-	int width;
-  int height;
-
   ResourceManager& resourceManager;
 	Window window;
 
