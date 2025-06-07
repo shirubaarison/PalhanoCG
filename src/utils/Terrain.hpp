@@ -6,10 +6,9 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <stb_image.h>
 
-#include "Shader.hpp"
-#include "Vao.hpp"
-#include "Ebo.hpp"
-#include "Texture.hpp"
+#include "graphics/Shader.hpp"
+#include "graphics/Vao.hpp"
+#include "graphics/Texture.hpp"
 
 class Terrain {
 public:

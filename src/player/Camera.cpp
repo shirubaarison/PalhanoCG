@@ -1,4 +1,4 @@
-#include "Camera.hpp"
+#include "player/Camera.hpp"
 
 Camera::Camera(int width, int height, glm::vec3 position)
   : width(width),

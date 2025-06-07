@@ -3,10 +3,9 @@
 
 #include <map>
 #include <string>
-#include <memory>
 
-#include "Shader.hpp"
-#include "Model.hpp"
+#include "graphics/Shader.hpp"
+#include "graphics/Model.hpp"
 
 class ResourceManager {
 public:

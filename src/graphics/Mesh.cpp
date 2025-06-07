@@ -1,4 +1,5 @@
-#include "Mesh.hpp"
+#include "graphics/Mesh.hpp"
+#include "graphics/Ebo.hpp"
 
 Mesh::Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::vector <Texture>& textures)
 {

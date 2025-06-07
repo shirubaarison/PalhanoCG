@@ -1,13 +1,10 @@
-#include "ResourceManager.hpp"
+#include "resources/ResourceManager.hpp"
 
 std::map<std::string, Model> ResourceManager::Models;
 std::map<std::string, Shader> ResourceManager::Shaders;
 std::map<std::string, Texture> ResourceManager::Textures;
 
-ResourceManager::ResourceManager()
-{
-
-}
+ResourceManager::ResourceManager() {}
 
 Model& ResourceManager::loadModel(const std::string& name, const std::string& path)
 {

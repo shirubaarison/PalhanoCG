@@ -1,6 +1,6 @@
-#include "Player.hpp"
+#include "player/Player.hpp"
+#include "input/InputHandler.hpp"
 #include "GLFW/glfw3.h"
-#include <iostream>
 
 Player::Player(int width, int height) 
   : pCamera(width, height, glm::vec3(0.0f, 1.0f, 5.0f)),    // criar camera

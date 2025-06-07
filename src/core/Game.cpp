@@ -1,4 +1,8 @@
-#include "Game.hpp"
+#include "core/Game.hpp"
+#include "input/InputHandler.hpp"
+
+#include <iostream>
+#include <glm/glm.hpp>
 
 unsigned int WIDTH = 1280;
 unsigned int HEIGHT = 720;

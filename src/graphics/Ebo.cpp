@@ -1,4 +1,4 @@
-#include "Ebo.hpp"
+#include "graphics/Ebo.hpp"
 
 EBO::EBO(std::vector<GLuint>& indices)
 {
