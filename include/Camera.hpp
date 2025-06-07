@@ -1,73 +1,61 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <iostream>
-
-#include "Shader.hpp"
 
 // Dois tipos de camera, ortho e perpsectiva
 enum class ProjectionType { Perspective, Orthographic };
 
+// Valores padrões (Alterar far plane depois?)
+constexpr float YAW         = -90.0f;
+constexpr float PITCH       =  0.0f;
+constexpr float ZOOM        =  45.0f; 
+constexpr float NEAR_PLANE  =  0.1f;
+constexpr float FAR_PLANE   =  200.0f;
+
 class Camera {
 public:
-  Camera(int width, int height, glm::vec3 position);
-
-  // envia a matriz de visualização * projeção para o shader
-  void matrix(Shader& shader, const char* uniform);
-  
-  // trata da entrada do usuário
-  void inputs(GLFWwindow* window, float deltaTime);
+  Camera(int width, int height, glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f));
   
   glm::mat4 getProjectionMatrix() const;
-  glm::mat4 getViewMatrix();
+  glm::mat4 getViewMatrix() const;
   glm::vec3 getPosition() const;
+  glm::vec3 getFront() const;
+
+  void setPosition(const glm::vec3& newPos);
+  void setProjectionType(ProjectionType type);
+  void setScreenSize(int width, int height);
+
+  glm::vec3 getRight() const;
+  glm::vec3 getUp() const;
+
+  ProjectionType getProjectionType() const;
+
+  void processRotation(float yawOffset, float pitchOffset, bool constrainPitch = true);
+  void processZoom(float scrollOffset);
 private:
   int width;
   int height;
 
+  float nearPlane;
+  float farPlane;
+
   // vetores fundamentais da camera
   glm::vec3 position;
-  glm::vec3 target;
-  glm::vec3 right;
+  glm::vec3 front;
   glm::vec3 up;
+  glm::vec3 right;
   glm::vec3 worldUp;
 
-  // matrizes calculadas
-  glm::mat4 cameraMatrix;
-  glm::mat4 projection;
-
-  bool useWireframe;
-  bool useOrtho;
   ProjectionType projectionType;
 
-  bool wireframePressed;
-  // evitar salto de click
-  bool firstClick = true;
-  
-  // ângulos de rotação
   float yaw; 
   float pitch;
-  
-  // Velocidade de movimento
-  float speed;
-  float sprintMultiplier;
 
-  // sensibilidade e limitação do ângulo vertical
-  float sensitivity;   
-  float maxVerticalAngle; // evitar alinhamento de direction com up
-
-  // Para a camera ortografica
-  float rotationAngle;
-  float rotationSpeed;
-  float orthoZoomLevel;
-
-  void processKeyboard(GLFWwindow* window, float deltaTime);
-  void processMouse(GLFWwindow* window);
+  float zoom;
 
   void updateCameraVectors();
 };
