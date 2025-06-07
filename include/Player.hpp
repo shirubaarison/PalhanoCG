@@ -7,14 +7,13 @@
 
 class Player {
 public:  
-  Player(int width, int height, GLFWwindow* window);
+  Player(int width, int height);
 
   void update(float deltaTime);
 
   const Camera& getCamera() const;
   
 private:
-  InputHandler pInput;
   Camera pCamera;
   
   float baseSpeed;

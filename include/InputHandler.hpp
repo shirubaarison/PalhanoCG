@@ -4,63 +4,22 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-class InputHandler {
-  GLFWwindow* window;
-  double lastX;
-  double lastY;
+namespace InputHandler {
 
-public:
-   explicit InputHandler(GLFWwindow* win) : window(win) {
-        int width, height;
-        glfwGetWindowSize(window, &width, &height);
-        // centro
-        lastX = static_cast<double>(width) / 2.0;
-        lastY = static_cast<double>(height) / 2.0;
-    }
+void initialize(GLFWwindow* win);
 
-    bool isKeyPressed(int key) const {
-        return glfwGetKey(window, key) == GLFW_PRESS;
-    }
+bool isKeyPressed(int key);
+bool isKeyReleased(int key);
+bool isMouseButtonPressed(int button);
 
-    bool isKeyReleased(int key) const {
-        return glfwGetKey(window, key) == GLFW_RELEASE;
-    }
+void getMousePosition(double& x, double& y);
+void setCursorPosition(double x, double y);
 
-    bool isMouseButtonPressed(int button) const {
-        return glfwGetMouseButton(window, button) == GLFW_PRESS;
-    }
+glm::vec2 getMouseOffset();
 
-    void getMousePosition(double& x, double& y) const {
-        glfwGetCursorPos(window, &x, &y);
-    }
+void centerCursor();
+void setCursorMode(bool disabled);
 
-    void setCursorPosition(double x, double y) {
-        glfwSetCursorPos(window, x, y);
-    }
-
-    glm::vec2 getMouseOffset() {
-        double xpos, ypos;
-        glfwGetCursorPos(window, &xpos, &ypos);
-
-        glm::vec2 offset(xpos - lastX, ypos - lastY);
-        
-        lastX = xpos;
-        lastY = ypos;
-
-        return offset;
-    }
-
-    void centerCursor() {
-        int width, height;
-        glfwGetWindowSize(window, &width, &height);
-        lastX = static_cast<double>(width) / 2.0;
-        lastY = static_cast<double>(height) / 2.0;
-        glfwSetCursorPos(window, lastX, lastY);
-    }
-
-    void setCursorMode(bool disabled) {
-        glfwSetInputMode(window, GLFW_CURSOR,
-                         disabled ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
-    }};
+} 
 
 #endif
