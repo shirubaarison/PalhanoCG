@@ -2,13 +2,28 @@
 #include "GLFW/glfw3.h"
 
 Camera::Camera(int width, int height, glm::vec3 position)
+  : width(width),
+    height(height),
+    position(position),
+    target(glm::vec3(0.0f, 0.0f, -1.0f)),         // direção sempre oposta
+    up(glm::vec3(0.0f, 1.0f, 0.0f)),              // y para cima
+    worldUp(glm::vec3(0.0f, 1.0f, 0.0f)),
+    cameraMatrix(glm::mat4(1.0f)),
+    projection(glm::mat4(1.0f)),
+    useWireframe(false),
+    useOrtho(false),
+    projectionType(ProjectionType::Perspective),  // começar com projeção em perspectiva
+    firstClick(true),                             // evitar salto de click
+    yaw(-90.0f),
+    pitch(0.0f),
+    speed(2.0f),
+    sprintMultiplier(4.0f),
+    sensitivity(0.1f),
+    maxVerticalAngle(89.0f),
+    rotationAngle(0.0f),
+    rotationSpeed(1.0f),
+    orthoZoomLevel(10.0f)
 {
-  this->width = width;
-  this->height = height;
-  this->position = position;
-
-  this->up = glm::vec3(0.0f, 1.0f, 0.0f);
-  
   // inicializar target, right e up
   updateCameraVectors();
 }
@@ -171,14 +186,5 @@ glm::mat4 Camera::getProjectionMatrix() const
     return glm::ortho(-size * aspect, size * aspect, -size, size, 0.1f, 200.0f);
   }
 }
+
 glm::vec3 Camera::getPosition() const { return position; }
-
-void Camera::setWidth(int width)
-{
-  this->width = width;
-}
-
-void Camera::setHeight(int height)
-{
-  this->height = height;
-}
