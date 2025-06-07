@@ -1,4 +1,4 @@
-#include "Vao.hpp"
+#include "graphics/Vao.hpp"
 
 VAO::VAO()
 {

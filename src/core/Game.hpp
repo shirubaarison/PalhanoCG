@@ -1,15 +1,12 @@
 #ifndef GAME_CLASS_H
 #define GAME_CLASS_H
 
-#include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "errorReporting.hpp"
-#include "ResourceManager.hpp"
+#include "utils/errorReporting.hpp"
+#include "resources/ResourceManager.hpp"
 #include "Window.hpp"
-#include "glm/ext/matrix_transform.hpp"
-#include "glm/common.hpp"
-#include "Player.hpp"
+#include "player/Player.hpp"
 
 class Game {
 public:

@@ -1,4 +1,4 @@
-#include "InputHandler.hpp"
+#include "input/InputHandler.hpp"
 
 namespace InputHandler {
 

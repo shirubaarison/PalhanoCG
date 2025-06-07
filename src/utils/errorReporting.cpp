@@ -1,4 +1,4 @@
-#include "errorReporting.hpp"
+#include "utils/errorReporting.hpp"
 #include <iostream>
 #include <glad/glad.h>
 

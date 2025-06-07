@@ -1,16 +1,13 @@
 #ifndef MESH_CLASS_H
 #define MESH_CLASS_H
 
-#include <string>
 #include <vector>
-#include <unordered_set>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-#include "Vao.hpp"
-#include "Ebo.hpp"
-#include "Texture.hpp"
-#include "Shader.hpp"
+#include "graphics/Vao.hpp"
+#include "graphics/Texture.hpp"
+#include "graphics/Shader.hpp"
 
 class Mesh
 {

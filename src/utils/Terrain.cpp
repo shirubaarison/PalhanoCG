@@ -1,5 +1,6 @@
-#include "Terrain.hpp"
-#include "Shader.hpp"
+#include "utils/Terrain.hpp"
+#include "graphics/Ebo.hpp"
+#include <iostream>
 
 Terrain::Terrain(const std::string& path, const std::string& texturePath, int width, int length) 
 {

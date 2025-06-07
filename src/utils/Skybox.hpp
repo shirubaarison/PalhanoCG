@@ -4,14 +4,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include <iostream>
 #include <array>
 #include <vector>
 #include <stb_image.h>
 
-#include "Shader.hpp"
-#include "Vao.hpp"
-#include "Vbo.hpp"
+#include "graphics/Shader.hpp"
+#include "graphics/Vao.hpp"
 
 class Skybox {
 public:

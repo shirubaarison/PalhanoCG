@@ -1,5 +1,7 @@
 #include "Model.hpp"
 
+#include <iostream>
+
 Model::Model() {}
 
 Model::Model(const std::string& path) 

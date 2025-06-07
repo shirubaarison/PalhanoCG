@@ -1,8 +1,7 @@
-#include "InputHandler.hpp"
 #ifndef PLAYER_CLASS_H
 #define PLAYER_CLASS_H
 
-#include "Camera.hpp"
+#include "player/Camera.hpp"
 #include <glm/glm.hpp>
 
 class Player {

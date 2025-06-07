@@ -1,4 +1,5 @@
 #include "Texture.hpp"
+#include <iostream>
 
 Texture::Texture(const char* imagePath, const char* texType, GLuint slot)
 : type(texType), unit(slot), path(imagePath)
