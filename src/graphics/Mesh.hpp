@@ -8,6 +8,14 @@
 #include "graphics/Vao.hpp"
 #include "graphics/Texture.hpp"
 #include "graphics/Shader.hpp"
+#include "graphics/Vbo.hpp"
+
+struct Material {
+  glm::vec3 ambient;
+  glm::vec3 diffuse;
+  glm::vec3 specular;
+  float shininess;
+};
 
 class Mesh
 {
@@ -15,14 +23,17 @@ public:
 	std::vector <Vertex> vertices;
 	std::vector <GLuint> indices;
 	std::vector <Texture> textures;
-	// Store VAO in public so it can be used in the Draw function
+
+  Material material;
+
 	VAO vao;
 
-	// Initializes the mesh
-	Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::vector <Texture>& textures);
+	Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::vector <Texture>& textures, bool useTextures, const Material& material);
 
-	// Draws the mesh
 	void draw(Shader& shader, glm::mat4 model);
+
+private:
+  bool useTextures;
 };
 #endif
 

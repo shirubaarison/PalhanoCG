@@ -91,13 +91,14 @@ void Game::render()
 	shader.setMat4("projection", gPlayer->getCamera().getProjectionMatrix());
 	shader.setMat4("view", gPlayer->getCamera().getViewMatrix());
 	shader.setVec4("lightColor",  glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-	shader.setVec3("lightPos",  glm::vec3(2.0f, 5.0f, 2.0f));
+	shader.setVec3("lightPos",  glm::vec3(0.0f, 5.0f, 2.0f));
 	shader.setVec3("camPos", gPlayer->getCamera().getPosition());
 
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
+	// model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
+  model = glm::scale(model, glm::vec3(10.0f, 10.0f, 10.0f));
 
-	Model cat = resourceManager.getModel("cat");
+	Model cat = resourceManager.getModel("bike");
 	cat.draw(shader, model);
 }
 
@@ -108,5 +109,10 @@ void Game::loadAssets()
 
 	// Models
 	// resourceManager.loadModel("backpack", "assets/models/backpack/backpack.obj");
-	resourceManager.loadModel("cat", "assets/models/cat/cat_-_ps1_low_poly_rigged.obj");
+	// resourceManager.loadModel("cat", "assets/models/cat/cat_-_ps1_low_poly_rigged.obj");
+	 resourceManager.loadModel("tree", "assets/models/tree/model.obj");
+  resourceManager.loadModel("gtr", "assets/models/gtr/Nissan GTR.obj");
+  resourceManager.loadModel("pig", "assets/models/pig/pig.obj");
+  resourceManager.loadModel("su", "assets/models/su/russian_su-25.obj");
+  resourceManager.loadModel("bike", "assets/models/bike/bike.obj");
 }

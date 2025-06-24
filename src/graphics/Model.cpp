@@ -1,4 +1,5 @@
 #include "Model.hpp"
+#include "assimp/material.h"
 
 #include <iostream>
 
@@ -47,6 +48,8 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
   std::vector<unsigned int> indices;
   std::vector<Texture> textures;
 
+  bool useTextures = true;
+
   for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
     Vertex vertex;
     glm::vec3 vector;
@@ -65,10 +68,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
       vector.z = mesh->mNormals[i].z;
       vertex.normal = vector;
     } else {
-      vector.x = 0.0f;
-      vector.y = 0.0f;
-      vector.z = 1.0f; 
-      vertex.normal = vector;
+      vertex.normal = glm::vec3(0.0f, 0.0f, 1.0f);
     }
 
     // Texturas
@@ -79,13 +79,12 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
       vec.y = mesh->mTextureCoords[0][i].y;
       vertex.texCoords = vec;
     } else {
-      vertex.texCoords = glm::vec2(1.0f, 0.0f); 
+      vertex.texCoords = glm::vec2(0.0f, 0.0f); 
     }
 
     vertices.push_back(vertex);
   }
   
-  // agora para vertices
   for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
     aiFace face = mesh->mFaces[i];
 
@@ -96,18 +95,50 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
   // processar materiais
   aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
   
-  // Por enquanto...
-  // diffuse = diffuseN
-  // specular = specularN
+  // Adicionar cores
+  Material mat{};
+  aiColor3D color;
+
+  if (!mesh->HasVertexColors(0)) {
+    mat.ambient = glm::vec3(0.0f, 0.0f, 0.0f);
+    mat.diffuse = glm::vec3(0.0f, 0.0f, 0.0f);
+    mat.specular = glm::vec3(0.0f, 0.0f, 0.0f);
+    mat.shininess = 32.0f;
+    
+    if (material->Get(AI_MATKEY_COLOR_AMBIENT, color) == AI_SUCCESS)
+      mat.ambient = glm::vec3(color.r, color.g, color.b);
+     
+    if (material->Get(AI_MATKEY_COLOR_DIFFUSE, color) == AI_SUCCESS) {
+      mat.diffuse = glm::vec3(color.r, color.g, color.b);
+      // adicionar cores nos vertices
+      for (auto& v : vertices) {
+        v.color = glm::vec4(color.r, color.g, color.b, 1.0f);
+      }
+    }
+
+    if (material->Get(AI_MATKEY_COLOR_SPECULAR, color) == AI_SUCCESS)
+      mat.specular = glm::vec3(color.r, color.g, color.b);
+    
+    float shininess;
+    if (material->Get(AI_MATKEY_SHININESS, shininess) == AI_SUCCESS)
+      mat.shininess = shininess;
+  }
   
+  // Texturas
   std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "diffuse");
   textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 
   std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "specular");
   textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+  
+  // se não tiver texturas, usa cores
+  if (!textures.empty())
+    useTextures = true;
+  else 
+    useTextures = false;
+  
 
-  // cria a mesh e retorna ela  
-  return Mesh(vertices, indices, textures);
+  return Mesh(vertices, indices, textures, useTextures, mat);
 }
 
 std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
@@ -119,9 +150,10 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
     
     mat->GetTexture(type, i, &str);
     bool skip = false;
+    std::string path = this->directory + '/' + str.C_Str();
+    
+    // Check if texture is already loaded
     for (unsigned int j = 0; j < textures_loaded.size(); j++) {
-      std::string path = this->directory + '/' + str.C_Str();
-      
       if (std::strcmp(textures_loaded[j].path.data(), path.c_str()) == 0) {
         // Se ja tá carregada
         load_textures.push_back(textures_loaded[j]);
@@ -129,9 +161,9 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
         break;
       }
     }
+    
     if (!skip) {
       // Adicionar a textura 
-      std::string path = this->directory + '/' + str.C_Str();
       Texture texture(path.c_str(), typeName.c_str(), textures_loaded.size());
       load_textures.push_back(texture);
       textures_loaded.push_back(texture);
