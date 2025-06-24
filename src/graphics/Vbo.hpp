@@ -4,17 +4,19 @@
 #include "graphics/Shader.hpp"
 #include <vector>
 
+// vertices com texturas
 struct Vertex {
   glm::vec3 position;
   glm::vec3 normal;
+  glm::vec4 color;
   glm::vec2 texCoords;
 };
 
 class VBO {
 public:
   GLuint ID;
-  VBO(const std::vector<Vertex>& vertices);   // modelos
-  VBO(const std::vector<float>& vertices);    // para skybox e terreno
+  VBO(const std::vector<Vertex>& vertices);         // modelos
+  VBO(const std::vector<float>& vertices);          // para skybox e terreno
   void Delete();
   
   void bind() const;
