@@ -1,14 +1,16 @@
 #include "graphics/Mesh.hpp"
 #include "graphics/Ebo.hpp"
+#include "graphics/Shader.hpp"
 #include <iostream>
 
-Mesh::Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::vector <Texture>& textures, bool useTextures, const Material& material)
+Mesh::Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::vector <Texture>& textures, bool useDiffuse, bool useSpecular, const Material& material)
 {
 	Mesh::vertices = vertices;
 	Mesh::indices = indices;
 	Mesh::textures = textures;
   Mesh::material = material;
-  Mesh::useTextures = useTextures;
+  Mesh::useDiffuse = useDiffuse;
+  Mesh::useSpecular = useSpecular;
 
 	vao.bind();
 	// Gerar VBO e linkar os vertices
@@ -37,7 +39,7 @@ void Mesh::draw(Shader& shader, glm::mat4 model)
   shader.use();
   vao.bind();
   
-  if (useTextures) {
+  if (useDiffuse || useSpecular) {
     unsigned int numDiffuse = 0;
     unsigned int numSpecular = 0;
 
@@ -54,9 +56,14 @@ void Mesh::draw(Shader& shader, glm::mat4 model)
       textures[i].bind();
     }
 
-    glUniform1i(glGetUniformLocation(shader.ID, "useVertexColors"), 0);
+    if (numDiffuse != 0)
+      glUniform1i(glGetUniformLocation(shader.ID, "useDiffuseMap"), 1);
+
+    if (numSpecular != 0)
+      glUniform1i(glGetUniformLocation(shader.ID, "useSpecularMap"), 1);
   } else {
-    glUniform1i(glGetUniformLocation(shader.ID, "useVertexColors"), 1);
+    glUniform1i(glGetUniformLocation(shader.ID, "useDiffuseMap"), 0);
+    glUniform1i(glGetUniformLocation(shader.ID, "useSpecularMap"), 0);
   }
 
   GLint modelLoc = glGetUniformLocation(shader.ID, "model");

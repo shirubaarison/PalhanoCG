@@ -28,12 +28,13 @@ public:
 
 	VAO vao;
 
-	Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::vector <Texture>& textures, bool useTextures, const Material& material);
+	Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::vector <Texture>& textures, bool useDiffuse, bool useSpecular, const Material& material);
 
 	void draw(Shader& shader, glm::mat4 model);
 
 private:
-  bool useTextures;
+  bool useDiffuse;
+  bool useSpecular;
 };
 #endif
 
