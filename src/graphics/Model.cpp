@@ -48,7 +48,8 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
   std::vector<unsigned int> indices;
   std::vector<Texture> textures;
 
-  bool useTextures = true;
+  bool useDiffuse = true;
+  bool useSpecular = true;
 
   for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
     Vertex vertex;
@@ -132,13 +133,13 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
   textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
   
   // se não tiver texturas, usa cores
-  if (!textures.empty())
-    useTextures = true;
-  else 
-    useTextures = false;
+  if (diffuseMaps.empty())
+    useDiffuse = false;
   
+  if (specularMaps.empty())
+    useSpecular = false;
 
-  return Mesh(vertices, indices, textures, useTextures, mat);
+  return Mesh(vertices, indices, textures, useDiffuse, useSpecular, mat);
 }
 
 std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)

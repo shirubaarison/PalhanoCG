@@ -1,4 +1,5 @@
 #include "core/Game.hpp"
+#include "glm/trigonometric.hpp"
 #include "input/InputHandler.hpp"
 
 #include <iostream>
@@ -82,7 +83,7 @@ void Game::update(float deltaTime)
 
 void Game::render()
 {
-  glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	Shader shader = resourceManager.getShader("default");
@@ -91,14 +92,15 @@ void Game::render()
 	shader.setMat4("projection", gPlayer->getCamera().getProjectionMatrix());
 	shader.setMat4("view", gPlayer->getCamera().getViewMatrix());
 	shader.setVec4("lightColor",  glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-	shader.setVec3("lightPos",  glm::vec3(0.0f, 5.0f, 2.0f));
+	shader.setVec3("lightPos",  glm::vec3(0.0f, 5.0f, 5.0f));
 	shader.setVec3("camPos", gPlayer->getCamera().getPosition());
 
 	glm::mat4 model = glm::mat4(1.0f);
-	// model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
-  model = glm::scale(model, glm::vec3(10.0f, 10.0f, 10.0f));
+	model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
+  model = glm::scale(model, glm::vec3(5.0f, 5.0f, 5.0f));
+  model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
-	Model cat = resourceManager.getModel("bike");
+	Model cat = resourceManager.getModel("saitama");
 	cat.draw(shader, model);
 }
 
@@ -108,11 +110,11 @@ void Game::loadAssets()
 	resourceManager.loadShader("default", "assets/shaders/default.vs.glsl", "assets/shaders/default.fs.glsl");
 
 	// Models
-	// resourceManager.loadModel("backpack", "assets/models/backpack/backpack.obj");
 	// resourceManager.loadModel("cat", "assets/models/cat/cat_-_ps1_low_poly_rigged.obj");
-	 resourceManager.loadModel("tree", "assets/models/tree/model.obj");
-  resourceManager.loadModel("gtr", "assets/models/gtr/Nissan GTR.obj");
-  resourceManager.loadModel("pig", "assets/models/pig/pig.obj");
-  resourceManager.loadModel("su", "assets/models/su/russian_su-25.obj");
-  resourceManager.loadModel("bike", "assets/models/bike/bike.obj");
+	//  resourceManager.loadModel("tree", "assets/models/tree/model.obj");
+	//  resourceManager.loadModel("gtr", "assets/models/gtr/Nissan GTR.obj");
+	//  resourceManager.loadModel("pig", "assets/models/pig/pig.obj");
+	//  resourceManager.loadModel("su", "assets/models/su/russian_su-25.obj");
+	//  resourceManager.loadModel("bike", "assets/models/bike/bike.obj");
+  resourceManager.loadModel("saitama", "assets/models/saitama/saitama_ultimate_mode.obj");
 }
