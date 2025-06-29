@@ -8,10 +8,17 @@
 #include "Window.hpp"
 #include "player/Player.hpp"
 
+
+enum GameState {
+  GAME_ACTIVE,
+  GAME_MENU
+};
+
 class Game {
 public:
 	Game();
-
+  
+  GameState state;
 	bool initialize();
 	void loadAssets();
 	void run();

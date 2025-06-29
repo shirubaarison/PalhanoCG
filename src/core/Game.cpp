@@ -10,7 +10,8 @@ unsigned int HEIGHT = 720;
 const char* TITLE = "Trabalho CG";
 
 Game::Game() 
-  : resourceManager(ResourceManager::getInstance()),
+  : state(GAME_ACTIVE),
+    resourceManager(ResourceManager::getInstance()),
     window(),
     gIsRunning(false) {}
 
