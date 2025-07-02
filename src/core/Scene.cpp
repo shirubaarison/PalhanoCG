@@ -24,7 +24,7 @@ void Scene::update(float deltaTime)
 
 const Terrain& Scene::getTerrain() const { return *terrain; }
 
-// const Skybox& Scene::getSkybox() const { return skybox; }
+const Skybox& Scene::getSkybox() const { return *skybox; }
 
 void Scene::init() 
 {
@@ -32,7 +32,7 @@ void Scene::init()
   terrain = new Terrain("assets/heightmaps/heightmap.png", "assets/heightmaps/mato.jpg", 1025, 1025);
 
   // SKYBOX
-  // skybox = Skybox("assets/skybox");
+  skybox = new Skybox("assets/skybox");
   
   // OBJETOS (MODELOS)
   ResourceManager& manager = ResourceManager::getInstance();

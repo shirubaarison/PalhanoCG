@@ -22,6 +22,6 @@ private:
   std::vector<GameObject> objects;
 
   Terrain* terrain; 
-  // Skybox skybox;
+  Skybox* skybox;
 };
 #endif // !SCENE_CLASS_H
