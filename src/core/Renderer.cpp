@@ -11,7 +11,10 @@ void Renderer::render(const Scene &scene, const Camera &camera)
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   drawTerrain(scene.getTerrain(), ResourceManager::getInstance().getShader("terrain"), camera);
+  
   draw(scene.getObjects(), camera);
+
+  drawSkybox(scene.getSkybox(), ResourceManager::getInstance().getShader("skybox"), camera);
 }
 
 void Renderer::draw(const std::vector<GameObject> &gameObjects, const Camera &camera) const
@@ -57,7 +60,16 @@ void Renderer::drawTerrain(const Terrain& terrain, Shader& shader, const Camera&
   glEnable(GL_CULL_FACE); 
 }
 
-void Renderer::drawSkybox(const Skybox& skybox, Shader& shader)
+void Renderer::drawSkybox(const Skybox& skybox, Shader& shader, const Camera& camera)
 {
+  glDepthFunc(GL_LEQUAL); // passe no teste de depth
+  
+  shader.use();
+  glm::mat3 skyboxView = glm::mat4(glm::mat3(camera.getViewMatrix()));
+  shader.setMat4("projection", camera.getProjectionMatrix());
+  shader.setMat4("view", skyboxView);
+  
   skybox.render(shader);
+
+  glDepthFunc(GL_LESS);
 }
