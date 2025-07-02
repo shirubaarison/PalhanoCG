@@ -10,8 +10,6 @@ int main()
     return -1;
   }
 
-	game.loadAssets();
-
   game.run();
   
   game.shutdown();

@@ -3,11 +3,12 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "core/Renderer.hpp"
+#include "core/Scene.hpp"
 #include "utils/errorReporting.hpp"
 #include "resources/ResourceManager.hpp"
 #include "Window.hpp"
 #include "player/Player.hpp"
-
 
 enum GameState {
   GAME_ACTIVE,
@@ -28,7 +29,8 @@ private:
 	Window window;
 
 	Player *gPlayer;
-
+  Renderer renderer;
+  Scene scene;
 	bool gIsRunning;
 
 	void update(float deltaTime);

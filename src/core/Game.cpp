@@ -1,5 +1,4 @@
 #include "core/Game.hpp"
-#include "glm/trigonometric.hpp"
 #include "input/InputHandler.hpp"
 
 #include <iostream>
@@ -43,6 +42,23 @@ bool Game::initialize()
 
 	// Inicialize o player
 	gPlayer = new Player(WIDTH, HEIGHT);
+
+  loadAssets();
+
+  auto shader = resourceManager.getShader("default");
+  auto model = resourceManager.getModel("saitama");
+
+  auto shader_shared_ptr = std::make_shared<Shader>(shader); // if `shader` is an object
+  auto model_shared_ptr = std::make_shared<Model>(model);
+
+  auto obj = std::make_shared<GameObject>(
+    "saitama",
+    shader_shared_ptr,
+    model_shared_ptr,
+    glm::vec3(0, 0, -3)
+  );
+
+  scene.addObject(obj);
 	
 	// Tudo certo
 	gIsRunning = true;
@@ -69,7 +85,6 @@ void Game::run()
 		mLastFrame = currentFrame;
 
 		update(deltaTime);
-
 		render();
 
 		glfwPollEvents();
@@ -80,29 +95,12 @@ void Game::run()
 void Game::update(float deltaTime) 
 {
   gPlayer->update(deltaTime);
+  scene.update(deltaTime);
 }
 
 void Game::render()
 {
-  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	Shader shader = resourceManager.getShader("default");
-	
-	shader.use();
-	shader.setMat4("projection", gPlayer->getCamera().getProjectionMatrix());
-	shader.setMat4("view", gPlayer->getCamera().getViewMatrix());
-	shader.setVec4("lightColor",  glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-	shader.setVec3("lightPos",  glm::vec3(0.0f, 5.0f, 5.0f));
-	shader.setVec3("camPos", gPlayer->getCamera().getPosition());
-
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
-  model = glm::scale(model, glm::vec3(5.0f, 5.0f, 5.0f));
-  model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
-	Model cat = resourceManager.getModel("saitama");
-	cat.draw(shader, model);
+  renderer.render(scene, gPlayer->getCamera());
 }
 
 void Game::loadAssets()
@@ -111,11 +109,6 @@ void Game::loadAssets()
 	resourceManager.loadShader("default", "assets/shaders/default.vs.glsl", "assets/shaders/default.fs.glsl");
 
 	// Models
-	// resourceManager.loadModel("cat", "assets/models/cat/cat_-_ps1_low_poly_rigged.obj");
-	//  resourceManager.loadModel("tree", "assets/models/tree/model.obj");
-	//  resourceManager.loadModel("gtr", "assets/models/gtr/Nissan GTR.obj");
-	//  resourceManager.loadModel("pig", "assets/models/pig/pig.obj");
-	//  resourceManager.loadModel("su", "assets/models/su/russian_su-25.obj");
-	//  resourceManager.loadModel("bike", "assets/models/bike/bike.obj");
   resourceManager.loadModel("saitama", "assets/models/saitama/saitama_ultimate_mode.obj");
+  resourceManager.loadModel("pig", "assets/models/pig/pig.obj");
 }
