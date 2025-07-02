@@ -1,5 +1,7 @@
-#include "utils/Skybox.hpp"
+#include "world/Skybox.hpp"
 #include <iostream>
+
+Skybox::Skybox() {}
 
 Skybox::Skybox(const std::string& path)
 {
@@ -98,7 +100,7 @@ unsigned int Skybox::loadCubemap(std::vector<std::string> faces)
   return textureID;
 }
 
-void Skybox::render(Shader& shader)
+void Skybox::render(Shader& shader) const
 {
   glDepthMask(GL_FALSE);
   

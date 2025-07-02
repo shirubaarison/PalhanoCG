@@ -1,13 +1,15 @@
 #include "core/Scene.hpp"
 #include "resources/ResourceManager.hpp"
 
+Scene::Scene() {}
+
 void Scene::addObject(const GameObject& object) 
 {
   objects.push_back(object);
-  objectPointers.push_back(&objects.back());
 }
 
-const std::vector<GameObject>& Scene::getObjects() const {
+const std::vector<GameObject>& Scene::getObjects() const 
+{
   return objects;
 }
 
@@ -20,10 +22,21 @@ void Scene::update(float deltaTime)
   }
 }
 
+const Terrain& Scene::getTerrain() const { return *terrain; }
+
+// const Skybox& Scene::getSkybox() const { return skybox; }
+
 void Scene::init() 
 {
-  ResourceManager& manager = ResourceManager::getInstance();
+  // TERRENO
+  terrain = new Terrain("assets/heightmaps/heightmap.png", "assets/heightmaps/mato.jpg", 1025, 1025);
+
+  // SKYBOX
+  // skybox = Skybox("assets/skybox");
   
+  // OBJETOS (MODELOS)
+  ResourceManager& manager = ResourceManager::getInstance();
+
   GameObject obj1;
 
   obj1.shader = &manager.getShader("default");

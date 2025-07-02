@@ -12,9 +12,10 @@
 
 class Terrain {
 public:
+  Terrain();
   Terrain(const std::string& path, const std::string& texturePath, int width, int length);
   void loadHeightMap(const std::string& path);
-  void draw(Shader& shader);
+  void draw(Shader& shader) const;
 
   Texture texture;
   VAO vao;
