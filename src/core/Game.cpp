@@ -44,21 +44,7 @@ bool Game::initialize()
 	gPlayer = new Player(WIDTH, HEIGHT);
 
   loadAssets();
-
-  auto shader = resourceManager.getShader("default");
-  auto model = resourceManager.getModel("saitama");
-
-  auto shader_shared_ptr = std::make_shared<Shader>(shader); // if `shader` is an object
-  auto model_shared_ptr = std::make_shared<Model>(model);
-
-  auto obj = std::make_shared<GameObject>(
-    "saitama",
-    shader_shared_ptr,
-    model_shared_ptr,
-    glm::vec3(0, 0, -3)
-  );
-
-  scene.addObject(obj);
+	scene.init();
 	
 	// Tudo certo
 	gIsRunning = true;

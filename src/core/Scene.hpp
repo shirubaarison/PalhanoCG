@@ -5,12 +5,15 @@
 
 class Scene {
 public:
-  void addObject(const std::shared_ptr<GameObject>& object);
-  void removeObject(const std::shared_ptr<GameObject>& object);
-  const std::vector<std::shared_ptr<GameObject>>& getObjects() const;
+  void addObject(const GameObject& object);
+  // TODO:
+  // remover objetos
+  const std::vector<GameObject>& getObjects() const;
   void update(float deltaTime);
 
+  void init();
 private:
-  std::vector<std::shared_ptr<GameObject>> objects;
+  std::vector<GameObject> objects;
+  std::vector<const GameObject*> objectPointers;
 };
 #endif // !SCENE_CLASS_H
