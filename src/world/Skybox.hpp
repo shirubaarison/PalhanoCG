@@ -13,10 +13,11 @@
 
 class Skybox {
 public:
+  Skybox();
   Skybox(const std::string& path);
 
   void load();
-  void render(Shader& shader);
+  void render(Shader& shader) const;
 
 private:
   unsigned int loadCubemap(std::vector<std::string> faces);

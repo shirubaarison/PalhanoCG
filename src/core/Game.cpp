@@ -44,6 +44,7 @@ bool Game::initialize()
 	gPlayer = new Player(WIDTH, HEIGHT);
 
   loadAssets();
+	
 	scene.init();
 	
 	// Tudo certo
@@ -93,6 +94,8 @@ void Game::loadAssets()
 {
 	// Shaders
 	resourceManager.loadShader("default", "assets/shaders/default.vs.glsl", "assets/shaders/default.fs.glsl");
+	resourceManager.loadShader("terrain", "assets/shaders/terrain.vs.glsl", "assets/shaders/terrain.fs.glsl");
+	resourceManager.loadShader("skybox", "assets/shaders/skybox.vs.glsl", "assets/shaders/skybox.fs.glsl");
 
 	// Models
   resourceManager.loadModel("saitama", "assets/models/saitama/saitama_ultimate_mode.obj");

@@ -1,6 +1,8 @@
-#include "utils/Terrain.hpp"
+#include "world/Terrain.hpp"
 #include "graphics/Ebo.hpp"
 #include <iostream>
+
+Terrain::Terrain() {}
 
 Terrain::Terrain(const std::string& path, const std::string& texturePath, int width, int length) 
 {
@@ -68,11 +70,12 @@ void Terrain::loadHeightMap(const std::string& path)
   ebo.unbind();
 } 
 
-void Terrain::draw(Shader& shader) 
+void Terrain::draw(Shader& shader) const
 {
   shader.use();  
   vao.bind();
   texture.bind();
+  
   for(int strip = 0; strip < numStrips; ++strip) {
     glDrawElements(GL_TRIANGLE_STRIP,
                    numVertPerStrip,
