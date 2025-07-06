@@ -31,7 +31,7 @@ void Renderer::draw(const std::vector<GameObject> &gameObjects, const Camera &ca
     obj.shader->setVec3("camPos", camera.getPosition());
 
     obj.shader->setVec4("lightColor", glm::vec4(1.0f));
-    obj.shader->setVec3("lightPos", glm::vec3(0.0f, 5.0f, 5.0f));
+    obj.shader->setVec3("lightPos", glm::vec3(2.0f, 10.0f, 5.0f));
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, obj.transform.position);
@@ -49,7 +49,7 @@ void Renderer::drawTerrain(const Terrain& terrain, Shader& shader, const Camera&
 {
   shader.use();
   glm::mat4 model = glm::mat4(1.0f);
-  model = glm::translate(model, glm::vec3(0.0f, 13.5f, 0.0f));
+  model = glm::translate(model, glm::vec3(0.0f, 13.0f, 0.0f));
   shader.setMat4("projection", camera.getProjectionMatrix());
   shader.setMat4("view", camera.getViewMatrix());
   shader.setMat4("model", model);
