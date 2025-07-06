@@ -1,0 +1,8 @@
+# exported by https://3dviewer.net
+newmtl Wood_trim
+Kd 0.8 0.8 0.8
+d 1
+Ka 0 0 0
+Ks 0.8 0.8 0.8
+Ns 250
+map_Kd Wood_house_BaseColor.1001.jpg
