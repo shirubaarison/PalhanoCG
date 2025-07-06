@@ -94,10 +94,15 @@ void Game::loadAssets()
 {
 	// Shaders
 	resourceManager.loadShader("default", "assets/shaders/default.vs.glsl", "assets/shaders/default.fs.glsl");
+	resourceManager.loadShader("simple", "assets/shaders/simple.vs.glsl", "assets/shaders/simple.fs.glsl");
 	resourceManager.loadShader("terrain", "assets/shaders/terrain.vs.glsl", "assets/shaders/terrain.fs.glsl");
 	resourceManager.loadShader("skybox", "assets/shaders/skybox.vs.glsl", "assets/shaders/skybox.fs.glsl");
 
-	// Models
-  resourceManager.loadModel("saitama", "assets/models/saitama/saitama_ultimate_mode.obj");
+	// Modelos	
+	resourceManager.loadModel("pendurador", "assets/models/pendurador/da p se pendurar.obj");
+	resourceManager.loadModel("bike", "assets/models/pendurador/da p se pendurar.obj");
+	resourceManager.loadModel("pendurador", "assets/models/bike/bike.obj");
+	resourceManager.loadModel("caminhador", "assets/models/caminhador/caminhador.obj");
+  resourceManager.loadModel("casa1", "assets/models/casa1/model.obj");
   resourceManager.loadModel("pig", "assets/models/pig/pig.obj");
 }
