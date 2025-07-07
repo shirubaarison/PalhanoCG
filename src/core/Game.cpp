@@ -61,6 +61,8 @@ void Game::shutdown()
 	gPlayer = nullptr;
 }
 
+const Terrain& Game::getTerrain() const { return *terrain; }
+
 void Game::run()
 {
 	float deltaTime = 0.0f;
@@ -81,13 +83,62 @@ void Game::run()
 
 void Game::update(float deltaTime) 
 {
-  gPlayer->update(deltaTime);
+  gPlayer->update(deltaTime, *terrain);
   scene.update(deltaTime);
+  
+  if (gPlayer) {
+    glm::vec3 playerMin = gPlayer->getAABBMin();
+    glm::vec3 playerMax = gPlayer->getAABBMax();
+
+    const std::vector<GameObject>& sceneObjects = scene.getObjects();
+    for (GameObject obj : sceneObjects) {
+      if (obj.isStatic) {
+        continue;
+      }
+
+      glm::vec3 objMin = obj.transform.position - (obj.colliderSize * obj.transform.scale * 0.5f);
+      glm::vec3 objMax = obj.transform.position + (obj.colliderSize * obj.transform.scale * 0.5f);
+
+      bool overlapX = (playerMax.x > objMin.x) && (playerMin.x < objMax.x);
+      bool overlapY = (playerMax.y > objMin.y) && (playerMin.y < objMax.y);
+      bool overlapZ = (playerMax.z > objMin.z) && (playerMin.z < objMax.z);
+
+      if (overlapX && overlapY && overlapZ) {
+        float overlapX_depth = std::min(playerMax.x, objMax.x) - std::max(playerMin.x, objMin.x);
+        float overlapY_depth = std::min(playerMax.y, objMax.y) - std::max(playerMin.y, objMin.y);
+        float overlapZ_depth = std::min(playerMax.z, objMax.z) - std::max(playerMin.z, objMin.z);
+
+        if (overlapX_depth < overlapY_depth && overlapX_depth < overlapZ_depth) {
+          if (playerMin.x < objMin.x) { // esquerdo
+            gPlayer->pCamera.position.x -= overlapX_depth;
+          } else { // direita
+            gPlayer->pCamera.position.x += overlapX_depth;
+          }
+          gPlayer->velocity.x = 0;
+        } else if (overlapY_depth < overlapX_depth && overlapY_depth < overlapZ_depth) {
+          if (playerMin.y < objMin.y) { // abaixo
+            gPlayer->pCamera.position.y -= overlapY_depth;
+          } else { // acima
+            gPlayer->pCamera.position.y += overlapY_depth;
+            gPlayer->isOnGround = true;
+          }
+          gPlayer->velocity.y = 0;
+        } else {
+          if (playerMin.z < objMin.z) { // frente
+            gPlayer->pCamera.position.z -= overlapZ_depth;
+          } else { // atras
+            gPlayer->pCamera.position.z += overlapZ_depth;
+          }
+          gPlayer->velocity.z = 0;
+        }
+      }
+    }
+  }
 }
 
 void Game::render()
 {
-  renderer.render(scene, gPlayer->getCamera());
+  renderer.render(*terrain, scene, gPlayer->getCamera());
 }
 
 void Game::loadAssets()
@@ -105,4 +156,6 @@ void Game::loadAssets()
 	resourceManager.loadModel("caminhador", "assets/models/caminhador/caminhador.obj");
   resourceManager.loadModel("casa1", "assets/models/casa1/model.obj");
   resourceManager.loadModel("pig", "assets/models/pig/pig.obj");
+
+  terrain = new Terrain("assets/heightmaps/heightmap.png", "assets/heightmaps/areia.jpg", 1025, 1025);
 }

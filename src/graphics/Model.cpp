@@ -28,6 +28,8 @@ void Model::loadModel(const std::string& path)
   directory = path.substr(0, path.find_last_of('/'));
 
   processNode(scene->mRootNode, scene);
+
+  updateAABB();
 }
 
 void Model::processNode(aiNode *node, const aiScene *scene)
@@ -59,6 +61,9 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
     vector.x = mesh->mVertices[i].x;
     vector.y = mesh->mVertices[i].y;
     vector.z = mesh->mVertices[i].z;
+
+    aabbMin = glm::min(aabbMin, vector);
+    aabbMax = glm::max(aabbMax, vector);
     
     vertex.position = vector;
 
@@ -171,4 +176,10 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
     }
   }
   return load_textures;
+}
+
+void Model::updateAABB()
+{
+  aabbSize = aabbMax - aabbMin;
+  aabbCenter = (aabbMax + aabbMin) * 0.5f;
 }

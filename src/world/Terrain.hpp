@@ -17,6 +17,8 @@ public:
   void loadHeightMap(const std::string& path);
   void draw(Shader& shader) const;
 
+  float getHeight(float worldX, float worldZ) const;
+
   Texture texture;
   VAO vao;
 private:
