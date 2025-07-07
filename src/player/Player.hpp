@@ -18,8 +18,8 @@ public:
 
   bool isAffectedByGravity = true;
   bool isOnGround = false;
-  float jumpSpeed = 7.0f;
-
+  float jumpSpeed;
+  bool jumpPressed;
   glm::vec3 getAABBMin() const;
   glm::vec3 getAABBMax() const;
   
