@@ -36,6 +36,8 @@ public:
 
   void processRotation(float yawOffset, float pitchOffset, bool constrainPitch = true);
   void processZoom(float scrollOffset);
+
+  glm::vec3 position;
 private:
   int width;
   int height;
@@ -44,7 +46,6 @@ private:
   float farPlane;
 
   // vetores fundamentais da camera
-  glm::vec3 position;
   glm::vec3 front;
   glm::vec3 up;
   glm::vec3 right;

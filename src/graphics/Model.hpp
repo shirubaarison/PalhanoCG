@@ -17,6 +17,10 @@ public:
   std::vector<Texture> textures_loaded;
   std::string directory;
 
+  glm::vec3 aabbMin = glm::vec3(FLT_MAX);
+  glm::vec3 aabbMax = glm::vec3(-FLT_MAX);
+  glm::vec3 aabbSize = glm::vec3(0.0f);
+  glm::vec3 aabbCenter = glm::vec3(0.0f);
 private:
   std::vector<Mesh> meshes;
 
@@ -24,6 +28,7 @@ private:
   void processNode(aiNode *node, const aiScene *scene);
   Mesh processMesh(aiMesh *mesh, const aiScene *scene);
   std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName);
+  void updateAABB();
 };
 
 #endif

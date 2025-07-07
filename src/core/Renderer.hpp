@@ -14,7 +14,7 @@ public:
   void draw(const std::vector<GameObject>& gameObjects, const Camera& camera) const;
   void drawTerrain(const Terrain& terrain, Shader& shader, const Camera& camera);
   void drawSkybox(const Skybox& skybox, Shader& shader, const Camera& camera);
-  void render(const Scene& scene, const Camera& camera);
+  void render(const Terrain& terrain, const Scene& scene, const Camera& camera);
 };
 
 #endif // RENDERER_CLASS_H

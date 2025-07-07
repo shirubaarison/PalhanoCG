@@ -16,12 +16,10 @@ public:
 
   void init();
 
-  const Terrain& getTerrain() const;
   const Skybox& getSkybox() const;
 private:
   std::vector<GameObject> objects;
 
-  Terrain* terrain; 
   Skybox* skybox;
 };
 #endif // !SCENE_CLASS_H

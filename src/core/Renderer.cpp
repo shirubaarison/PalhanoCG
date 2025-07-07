@@ -1,16 +1,17 @@
 #include "core/Renderer.hpp"
+#include "graphics/Shader.hpp"
 #include "player/Camera.hpp"
 #include "resources/ResourceManager.hpp"
 
 Renderer::Renderer() {}
 Renderer::~Renderer() {}
 
-void Renderer::render(const Scene &scene, const Camera &camera)
+void Renderer::render(const Terrain& terrain, const Scene &scene, const Camera &camera)
 {
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  drawTerrain(scene.getTerrain(), ResourceManager::getInstance().getShader("terrain"), camera);
+  drawTerrain(terrain, ResourceManager::getInstance().getShader("terrain"), camera);
   
   draw(scene.getObjects(), camera);
 
@@ -49,7 +50,7 @@ void Renderer::drawTerrain(const Terrain& terrain, Shader& shader, const Camera&
 {
   shader.use();
   glm::mat4 model = glm::mat4(1.0f);
-  model = glm::translate(model, glm::vec3(0.0f, 13.0f, 0.0f));
+  model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
   shader.setMat4("projection", camera.getProjectionMatrix());
   shader.setMat4("view", camera.getViewMatrix());
   shader.setMat4("model", model);

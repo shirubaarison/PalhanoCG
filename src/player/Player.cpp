@@ -10,10 +10,21 @@ Player::Player(int width, int height)
   firstClick(true),
   cameraTypeTogglePressed(false) {}
 
-void Player::update(float deltaTime)
+void Player::update(float deltaTime, const Terrain& terrain)
 {
   handleKeyboardInput(deltaTime);
   handleMouseInput();
+  applyPhysics(deltaTime, terrain);
+}
+
+glm::vec3 Player::getAABBMin() const
+{
+  return pCamera.getPosition() - (colliderSize * 0.5f);
+}
+
+glm::vec3 Player::getAABBMax() const
+{
+  return pCamera.getPosition() + (colliderSize * 0.5f);
 }
 
 const Camera& Player::getCamera() const
@@ -88,3 +99,29 @@ void Player::handleMouseInput()
   }
 }
 
+void Player::applyPhysics(float deltaTime, const Terrain& terrain)
+{
+  isOnGround = false;
+  const glm::vec3 GRAVITY = glm::vec3(0.0f, -9.81f, 0.0f);
+  if (isAffectedByGravity) {
+    velocity += GRAVITY * deltaTime;
+  }
+
+  glm::vec3 currentPosition = pCamera.getPosition();
+  currentPosition += velocity * deltaTime;
+  
+  // colisao do terreno
+  float playerHalfHeight = colliderSize.y * 0.5f;
+  float terrainHeightAtPlayerXZ = terrain.getHeight(currentPosition.x, currentPosition.z);
+
+  if (currentPosition.y - playerHalfHeight <= terrainHeightAtPlayerXZ) {
+    currentPosition.y = terrainHeightAtPlayerXZ + playerHalfHeight;
+
+    if (velocity.y < 0) {
+      velocity.y = 0.0f;
+    }
+    isOnGround = true; 
+  }
+
+  pCamera.setPosition(currentPosition);
+}

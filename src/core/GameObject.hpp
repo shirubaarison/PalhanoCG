@@ -29,6 +29,18 @@ public:
 
   Shader* shader;
   Model* model;
+
+  // fisica
+  glm::vec3 velocity = glm::vec3(0.0f);
+  glm::vec3 colliderSize = glm::vec3(1.0f); // colisao AABB
+
+  bool isStatic = false;
+  bool affectedByGravity = false;
+  bool isOnGround = false;
+
+  void updatePhysics(float deltaTime);
+  bool checkAABBCollision(const GameObject& other) const;
+  void resolveCollision(GameObject& other);
 };
 
 #endif // !GAME_OBJECT_CLASS_H

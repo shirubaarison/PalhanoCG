@@ -14,3 +14,56 @@ GameObject::GameObject(const std::string& name,
 }
 
 GameObject::GameObject() : isActive(true) {}
+
+void GameObject::updatePhysics(float deltaTime)
+{
+  if (!isStatic) {
+    if (affectedByGravity && !isOnGround) {
+      const glm::vec3 GRAVITY = glm::vec3(0.0f, -9.81f, 0.0f);
+      velocity += GRAVITY * deltaTime;
+    }
+
+    transform.position += velocity * deltaTime;
+
+    isOnGround = false;
+  }
+}
+
+bool GameObject::checkAABBCollision(const GameObject& other) const
+{
+  glm::vec3 thisMin = transform.position - (colliderSize * transform.scale * 0.5f);
+  glm::vec3 thisMax = transform.position + (colliderSize * transform.scale * 0.5f);
+
+  glm::vec3 otherMin = other.transform.position - (other.colliderSize * other.transform.scale * 0.5f);
+  glm::vec3 otherMax = other.transform.position + (other.colliderSize * other.transform.scale * 0.5f);
+
+  bool overlapX = (thisMax.x > otherMin.x) && (thisMin.x < otherMax.x);
+  bool overlapY = (thisMax.y > otherMin.y) && (thisMin.y < otherMax.y);
+  bool overlapZ = (thisMax.z > otherMin.z) && (thisMin.z < otherMax.z);
+
+  return overlapX && overlapY && overlapZ;
+}
+
+void GameObject::resolveCollision(GameObject& other)
+{
+  if (this->checkAABBCollision(other)) {
+    if (this->affectedByGravity && !other.isStatic) {
+      glm::vec3 penetration = glm::vec3(0.0f);
+
+      if (this->transform.position.y > other.transform.position.y) {
+        float thisBottom = this->transform.position.y - (this->colliderSize.y * this->transform.scale.y * 0.5f);
+        float otherTop = other.transform.position.y + (other.colliderSize.y * other.transform.scale.y * 0.5f);
+
+        if (thisBottom < otherTop) {
+          penetration.y = otherTop - thisBottom;
+        }
+      }
+
+      if (penetration.y > 0.0f) {
+        this->transform.position.y += penetration.y;
+        this->velocity.y = 0.0f; 
+        this->isOnGround = true;
+      }
+    }
+  }
+}

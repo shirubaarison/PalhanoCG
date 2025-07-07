@@ -9,6 +9,7 @@
 #include "resources/ResourceManager.hpp"
 #include "Window.hpp"
 #include "player/Player.hpp"
+#include "world/Terrain.hpp"
 
 enum GameState {
   GAME_ACTIVE,
@@ -24,6 +25,8 @@ public:
 	void loadAssets();
 	void run();
 	void shutdown();
+
+  const Terrain& getTerrain() const;
 private:
   ResourceManager& resourceManager;
 	Window window;
@@ -31,6 +34,9 @@ private:
 	Player *gPlayer;
   Renderer renderer;
   Scene scene;
+
+  Terrain* terrain;
+
 	bool gIsRunning;
 
 	void update(float deltaTime);
