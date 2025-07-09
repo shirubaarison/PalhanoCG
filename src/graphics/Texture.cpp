@@ -38,17 +38,22 @@ Texture::Texture(const char* imagePath, const char* texType, GLuint slot)
   glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
   glGenerateMipmap(GL_TEXTURE_2D);
 
+  this->height = height;
+  this->width = width;
+
   if (data) {
     stbi_image_free(data);
   }
 
-  std::cout << "Textura carrregada com sucesso: " << imagePath 
+  std::cout << "Textura carregada com sucesso: " << imagePath 
     << " (" << width << "x" << height << ", " << nrChannels << " channels)" 
-    << " Type: " << type << std::endl;
-  std::cout << "Unit: " << std::to_string(unit) << std::endl;
+    << " Tipo: " << type << std::endl;
 }
 
 Texture::Texture() {}
+
+int Texture::getWidth() const { return width; }
+int Texture::getHeight() const { return height; }
 
 void Texture::Delete()
 {

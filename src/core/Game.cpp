@@ -1,4 +1,5 @@
 #include "core/Game.hpp"
+#include "graphics/SpriteRenderer.hpp"
 #include "input/InputHandler.hpp"
 
 #include <iostream>
@@ -52,6 +53,12 @@ bool Game::initialize()
 
 	std::cout << "[OpenGL] OpenGL carregado com sucesso." << std::endl;
 
+  glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(WIDTH), static_cast<float>(HEIGHT), 0.0f, -1.0f, 1.0f);
+  ResourceManager::getInstance().getShader("ui").use();
+  ResourceManager::getInstance().getShader("ui").setInt("image", 0);
+  ResourceManager::getInstance().getShader("ui").setMat4("projection", projection);
+  
+  spriteRenderer = new SpriteRenderer(ResourceManager::getInstance().getShader("ui"));
 	return true;
 }
 
@@ -139,23 +146,27 @@ void Game::update(float deltaTime)
 void Game::render()
 {
   renderer.render(*terrain, scene, gPlayer->getCamera());
+
+  spriteRenderer->drawSprite(ResourceManager::getInstance().getTexture("face"), glm::vec2(200.0f, 200.0f), glm::vec2(300.0f, 400.0f));
 }
 
 void Game::loadAssets()
 {
 	// Shaders
 	resourceManager.loadShader("default", "assets/shaders/default.vs.glsl", "assets/shaders/default.fs.glsl");
-	resourceManager.loadShader("simple", "assets/shaders/simple.vs.glsl", "assets/shaders/simple.fs.glsl");
 	resourceManager.loadShader("terrain", "assets/shaders/terrain.vs.glsl", "assets/shaders/terrain.fs.glsl");
 	resourceManager.loadShader("skybox", "assets/shaders/skybox.vs.glsl", "assets/shaders/skybox.fs.glsl");
+  resourceManager.loadShader("ui", "assets/shaders/sprite_ui.vs.glsl", "assets/shaders/sprite_ui.fs.glsl");
 
 	// Modelos	
 	resourceManager.loadModel("pendurador", "assets/models/pendurador/da p se pendurar.obj");
-	resourceManager.loadModel("bike", "assets/models/pendurador/da p se pendurar.obj");
-	resourceManager.loadModel("pendurador", "assets/models/bike/bike.obj");
+	resourceManager.loadModel("bike", "assets/models/bike/bike.obj");
 	resourceManager.loadModel("caminhador", "assets/models/caminhador/caminhador.obj");
   resourceManager.loadModel("casa1", "assets/models/casa1/model.obj");
   resourceManager.loadModel("pig", "assets/models/pig/pig.obj");
 
   terrain = new Terrain("assets/heightmaps/heightmap.png", "assets/heightmaps/areia.jpg", 1025, 1025);
+
+  // Sprites para a UI
+  resourceManager.loadTexture("face", "assets/sprites/awesomeface.png");
 }
