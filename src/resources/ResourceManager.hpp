@@ -24,7 +24,7 @@ public:
 	Model& loadModel(const std::string& name, const std::string& path);
 	Model& getModel(const std::string& name);
 
-	Texture& loadTexture(const std::string& name, const char* path, const char* texType, GLuint slot);
+	Texture& loadTexture(const std::string& name, const char* path, const char* texType = "diffuse", GLuint slot = 0);
 	Texture& getTexture(const std::string& name);
 
 	void clear();

@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include "core/Renderer.hpp"
 #include "core/Scene.hpp"
+#include "graphics/SpriteRenderer.hpp"
 #include "utils/errorReporting.hpp"
 #include "resources/ResourceManager.hpp"
 #include "Window.hpp"
@@ -33,6 +34,7 @@ private:
 
 	Player *gPlayer;
   Renderer renderer;
+  SpriteRenderer *spriteRenderer;
   Scene scene;
 
   Terrain* terrain;

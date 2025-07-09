@@ -20,6 +20,12 @@ public:
   void texUnit(Shader& shader, const char* uniform, GLuint uint);
   void bind() const;
   void unbind() const;
+
+  int getWidth() const;
+  int getHeight() const;
+
+private:
+  int width, height;
 };
 
 #endif
