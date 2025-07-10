@@ -35,9 +35,15 @@ bool Game::initialize()
 	enableReportGlErrors();
 
   glEnable(GL_DEPTH_TEST);
+  
+  // Face Cull
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
   glFrontFace(GL_CCW);
+  
+  // Para PNG
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   glViewport(0, 0, WIDTH, HEIGHT);
 
@@ -147,7 +153,8 @@ void Game::render()
 {
   renderer.render(*terrain, scene, gPlayer->getCamera());
 
-  spriteRenderer->drawSprite(ResourceManager::getInstance().getTexture("face"), glm::vec2(200.0f, 200.0f), glm::vec2(300.0f, 400.0f));
+  spriteRenderer->drawSprite(ResourceManager::getInstance().getTexture("crosshair"), glm::vec2((WIDTH - 32.0f) / 2.0f,
+                             (HEIGHT - 32.0f) / 2.0f), glm::vec2(32.0f, 32.0f));
 }
 
 void Game::loadAssets()
@@ -168,5 +175,5 @@ void Game::loadAssets()
   terrain = new Terrain("assets/heightmaps/heightmap.png", "assets/heightmaps/areia.jpg", 1025, 1025);
 
   // Sprites para a UI
-  resourceManager.loadTexture("face", "assets/sprites/awesomeface.png");
+  resourceManager.loadTexture("crosshair", "assets/sprites/crosshair.png");
 }

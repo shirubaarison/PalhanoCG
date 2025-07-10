@@ -18,6 +18,9 @@ bool Window::initialize(int width, int height, const char* title)
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);  
+  
+  // MSAA
+  glfwWindowHint(GLFW_SAMPLES, 4);
 
 	mWindow = glfwCreateWindow(width, height, title, NULL, NULL);
   if (mWindow == NULL) {

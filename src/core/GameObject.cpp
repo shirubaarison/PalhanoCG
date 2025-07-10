@@ -15,19 +15,7 @@ GameObject::GameObject(const std::string& name,
 
 GameObject::GameObject() : isActive(true) {}
 
-void GameObject::updatePhysics(float deltaTime)
-{
-  if (!isStatic) {
-    if (affectedByGravity && !isOnGround) {
-      const glm::vec3 GRAVITY = glm::vec3(0.0f, -9.81f, 0.0f);
-      velocity += GRAVITY * deltaTime;
-    }
-
-    transform.position += velocity * deltaTime;
-
-    isOnGround = false;
-  }
-}
+void GameObject::updatePhysics(float deltaTime) {}
 
 bool GameObject::checkAABBCollision(const GameObject& other) const
 {
