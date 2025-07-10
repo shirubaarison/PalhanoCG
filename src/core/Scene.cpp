@@ -13,30 +13,7 @@ const std::vector<GameObject>& Scene::getObjects() const
   return objects;
 }
 
-void Scene::update(float deltaTime) 
-{
-  // atualizar física
-  for (auto& obj : objects) {
-    if (obj.isActive) {
-      obj.updatePhysics(deltaTime);
-    }
-  }
-  
-  // verificar colisões
-  for (size_t i = 0; i < objects.size(); i++) {
-    for (size_t j = i + 1; j < objects.size(); ++j) {
-      GameObject& obj1 = objects[i];
-      GameObject& obj2 = objects[j];
-
-      if (!obj1.isStatic || !obj2.isStatic) {
-        if (obj1.checkAABBCollision(obj2)) {
-          obj1.resolveCollision(obj2);
-          obj2.resolveCollision(obj1);
-        }
-      }
-    }
-  }
-}
+void Scene::update(float deltaTime) { }
 
 const Skybox& Scene::getSkybox() const { return *skybox; }
 

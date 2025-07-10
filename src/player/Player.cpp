@@ -7,7 +7,7 @@ Player::Player(int width, int height)
     jumpPressed(false),
     pCamera(width, height, glm::vec3(0.0f, 1.0f, 5.0f)),
     baseSpeed(5.0f),
-    sprintMultiplier(2.0f),
+    sprintMultiplier(1.4f),
     mouseSensitivity(0.1f),
     firstClick(true),
     cameraTypeTogglePressed(false) {}
