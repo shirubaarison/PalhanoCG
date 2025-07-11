@@ -3,16 +3,44 @@
 #include "engine/graphics/Shader.hpp"
 #include "engine/game/player/Camera.hpp"
 #include "engine/resources/ResourceManager.hpp"
+#include "engine/utils/Globals.hpp"
+#include "engine/utils/errorReporting.hpp"
 
 Renderer::Renderer() {}
 Renderer::~Renderer() {}
 
-void Renderer::render(const Terrain& terrain, const Scene &scene, const Camera &camera)
+bool Renderer::init()
+{
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    throw std::runtime_error("Falha ao inicializar GLAD");
+    return false;
+  }
+
+	enableReportGlErrors();
+
+  glEnable(GL_DEPTH_TEST);
+  
+  // Face Cull
+  glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
+  glFrontFace(GL_CCW);
+  
+  // Para PNG
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
+
+	std::cout << "[OpenGL] OpenGL carregado com sucesso." << std::endl;
+  return true;
+}
+
+void Renderer::render(const Scene &scene, const Camera &camera)
 {
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  drawTerrain(terrain, ResourceManager::getInstance().getShader("terrain"), camera);
+  drawTerrain(scene.getTerrain(), ResourceManager::getInstance().getShader("terrain"), camera);
   drawSkybox(scene.getSkybox(), ResourceManager::getInstance().getShader("skybox"), camera);
   draw(scene.getObjects(), camera);
 }

@@ -1,24 +1,21 @@
 #include "engine/core/Game.hpp"
 #include "engine/core/Scene.hpp"
 #include "engine/input/InputHandler.hpp"
+#include "engine/utils/Globals.hpp"
 
 #include <iostream>
 #include <glm/glm.hpp>
 
-unsigned int WIDTH = 1920;
-unsigned int HEIGHT = 1080;
-const char* TITLE = "Trabalho CG";
-
 Game::Game() 
   : state(GAME_ACTIVE),
-    resourceManager(ResourceManager::getInstance()),
-    gIsRunning(false) {}
+    resourceManager(ResourceManager::getInstance())
+    {}
 
 bool Game::initialize()
 {
 	// Inicializar janelas
   window = new Window();
-	if (!window->initialize(WIDTH, HEIGHT, TITLE)) {
+	if (!window->initialize()) {
 		std::cerr << "Erro ao inicializar Window" << std::endl;
 		return false;
 	}
@@ -26,60 +23,40 @@ bool Game::initialize()
 	// Inicializar inputs
 	InputHandler::initialize(window->getWindow());
 
-	// Carregar GLAD
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-    throw std::runtime_error("Falha ao inicializar GLAD");
+	// Inicializar OpenGL
+  renderer = new Renderer();
+  if (!renderer->init()) {
+    std::cerr << "Erro ao inicializar OpenGL" << std::endl;
     return false;
   }
-
-	enableReportGlErrors();
-
-  glEnable(GL_DEPTH_TEST);
   
-  // Face Cull
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
-  glFrontFace(GL_CCW);
-  
-  // Para PNG
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-  glViewport(0, 0, WIDTH, HEIGHT);
-
-	// Inicialize o player
-	gPlayer = new Player(WIDTH, HEIGHT);
-
+  // Carregue assets (shaders, texturas, modelos...)
   loadAssets();
 	
+  // Inicializar o player
+	player = new Player();
+
   // Inicializar a cena 
   scene = new Scene();
 	
   // Inicializar UI 
-  ui = new UI(ResourceManager::getInstance().getShader("ui"), WIDTH, HEIGHT);
-
-	// Tudo certo
-	gIsRunning = true;
-
-	std::cout << "[OpenGL] OpenGL carregado com sucesso." << std::endl;
+  ui = new UI();
 
 	return true;
 }
 
 void Game::shutdown()
 {
-	delete gPlayer;
-	gPlayer = nullptr;
+	delete player;
+	player = nullptr;
 }
-
-const Terrain& Game::getTerrain() const { return *terrain; }
 
 void Game::run()
 {
 	float deltaTime = 0.0f;
   float mLastFrame = 0.0f;
 	
-	while (gIsRunning && !window->windowShouldClose()) {
+	while (!window->windowShouldClose()) {
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - mLastFrame;
 		mLastFrame = currentFrame;
@@ -94,12 +71,12 @@ void Game::run()
 
 void Game::update(float deltaTime) 
 {
-  gPlayer->update(deltaTime, *terrain);
+  player->update(deltaTime, scene->getTerrain());
   scene->update(deltaTime);
   
-  if (gPlayer) {
-    glm::vec3 playerMin = gPlayer->getAABBMin();
-    glm::vec3 playerMax = gPlayer->getAABBMax();
+  if (player) {
+    glm::vec3 playerMin = player->getAABBMin();
+    glm::vec3 playerMax = player->getAABBMax();
 
     const std::vector<GameObject*> sceneObjects = scene->getObjects();
     for (GameObject *obj : sceneObjects) {
@@ -121,26 +98,26 @@ void Game::update(float deltaTime)
 
         if (overlapX_depth < overlapY_depth && overlapX_depth < overlapZ_depth) {
           if (playerMin.x < objMin.x) { // esquerdo
-            gPlayer->pCamera.position.x -= overlapX_depth;
+            player->pCamera.position.x -= overlapX_depth;
           } else { // direita
-            gPlayer->pCamera.position.x += overlapX_depth;
+            player->pCamera.position.x += overlapX_depth;
           }
-          gPlayer->velocity.x = 0;
+          player->velocity.x = 0;
         } else if (overlapY_depth < overlapX_depth && overlapY_depth < overlapZ_depth) {
           if (playerMin.y < objMin.y) { // abaixo
-            gPlayer->pCamera.position.y -= overlapY_depth;
+            player->pCamera.position.y -= overlapY_depth;
           } else { // acima
-            gPlayer->pCamera.position.y += overlapY_depth;
-            gPlayer->isOnGround = true;
+            player->pCamera.position.y += overlapY_depth;
+            player->isOnGround = true;
           }
-          gPlayer->velocity.y = 0;
+          player->velocity.y = 0;
         } else {
           if (playerMin.z < objMin.z) { // frente
-            gPlayer->pCamera.position.z -= overlapZ_depth;
+            player->pCamera.position.z -= overlapZ_depth;
           } else { // atras
-            gPlayer->pCamera.position.z += overlapZ_depth;
+            player->pCamera.position.z += overlapZ_depth;
           }
-          gPlayer->velocity.z = 0;
+          player->velocity.z = 0;
         }
       }
     }
@@ -149,11 +126,12 @@ void Game::update(float deltaTime)
 
 void Game::render()
 {
-  renderer->render(*terrain, *scene, gPlayer->getCamera());
+  // Objetos 3D, terreno, billboard e skybox
+  renderer->render(*scene, player->getCamera());
 
+  // UI
   glDisable(GL_DEPTH_TEST);
-  ui->drawSprite(ResourceManager::getInstance().getTexture("crosshair"), glm::vec2((WIDTH - 32.0f) / 2.0f,
-                                                                                               (HEIGHT - 32.0f) / 2.0f), glm::vec2(32.0f, 32.0f));
+    ui->drawSprite(ResourceManager::getInstance().getTexture("crosshair"), glm::vec2((Globals::WIDTH - 32.0f) / 2.0f, (Globals::HEIGHT - 32.0f) / 2.0f), glm::vec2(32.0f, 32.0f));
   glEnable(GL_DEPTH_TEST); 
 }
 
@@ -167,16 +145,11 @@ void Game::loadAssets()
   resourceManager.loadShader("billboard", "assets/shaders/billboard.vs.glsl", "assets/shaders/billboard.fs.glsl");
 
 	// Modelos	
-	resourceManager.loadModel("pendurador", "assets/models/pendurador/da p se pendurar.obj");
-	resourceManager.loadModel("bike", "assets/models/bike/bike.obj");
-	resourceManager.loadModel("caminhador", "assets/models/caminhador/caminhador.obj");
   resourceManager.loadModel("casa1", "assets/models/casa1/model.obj");
-  resourceManager.loadModel("pig", "assets/models/pig/pig.obj");
-
-  terrain = new Terrain("assets/heightmaps/heightmap.png", "assets/heightmaps/areia.jpg", 1025, 1025);
 
   // Sprites para a UI
   resourceManager.loadTexture("crosshair", "assets/sprites/crosshair.png");
 
+  // Billboarding
   resourceManager.loadTexture("tree", "assets/sprites/tree.png");
 }

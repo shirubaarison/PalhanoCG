@@ -1,18 +1,18 @@
 #include "engine/game/player/Camera.hpp"
+#include "engine/utils/Globals.hpp"
 
-Camera::Camera(int width, int height, glm::vec3 position)
-  : width(width),
-    height(height),
+Camera::Camera(glm::vec3 position)
+  : 
+    position(position),
+    zoom(ZOOM),
     nearPlane(NEAR_PLANE),
     farPlane(FAR_PLANE),
-    position(position),
     front(glm::vec3(0.0f, 0.0f, -1.0f)),         // direção sempre oposta
     up(glm::vec3(0.0f, 1.0f, 0.0f)),              // y para cima
     worldUp(glm::vec3(0.0f, 1.0f, 0.0f)),
     projectionType(ProjectionType::Perspective),
     yaw(-90.0f),
-    pitch(0.0f),
-    zoom(ZOOM)
+    pitch(0.0f)
 {
   updateCameraVectors();
 }
@@ -41,12 +41,12 @@ glm::mat4 Camera::getProjectionMatrix() const {
     if (projectionType == ProjectionType::Perspective) {
         return glm::perspective(
             glm::radians(zoom),
-            static_cast<float>(width) / static_cast<float>(height),
+            static_cast<float>(Globals::WIDTH) / static_cast<float>(Globals::HEIGHT),
             nearPlane,
             farPlane
         );
     } 
-    float aspect = static_cast<float>(width) / static_cast<float>(height);
+    float aspect = static_cast<float>(Globals::WIDTH) / static_cast<float>(Globals::HEIGHT);
     float size = zoom;
     return glm::ortho(
         -size * aspect, size * aspect,

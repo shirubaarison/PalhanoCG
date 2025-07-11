@@ -7,7 +7,7 @@
 
 class Player {
 public:  
-  Player(int width, int height);
+  Player();
 
   void update(float deltaTime, const Terrain& terrain);
 

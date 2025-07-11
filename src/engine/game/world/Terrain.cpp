@@ -22,7 +22,6 @@ void Terrain::loadHeightMap(const std::string& path)
     return;
   }
   
-  // Store height data for getHeight method
   heights.resize(width * height);
   float yScale = 64.0f / 256.0f, yShift = 3.0f;
   
@@ -40,7 +39,7 @@ void Terrain::loadHeightMap(const std::string& path)
       vertices.push_back(heightValue);                 // v.y (elevação da mesh)
       vertices.push_back(-width/2.0f + j);             // v.z
       
-      float repeatFactor = 1024.0f;
+      float repeatFactor = 2048.0f;
       vertices.push_back(j * repeatFactor / (width - 1));  // u
       vertices.push_back(i * repeatFactor / (height - 1)); // v
     }

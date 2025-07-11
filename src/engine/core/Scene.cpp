@@ -1,7 +1,9 @@
 #include "engine/core/Scene.hpp"
+#include "engine/game/world/Terrain.hpp"
 #include "engine/graphics/Billboard.hpp"
 #include "engine/core/GameObject.hpp"
 #include "engine/resources/ResourceManager.hpp" 
+#include <stdexcept>
 #include <string>
 
 Scene::Scene() {
@@ -28,11 +30,21 @@ void Scene::update(float deltaTime) {
   }
 }
 
-const Skybox& Scene::getSkybox() const {
+const Skybox& Scene::getSkybox() const 
+{
   if (!skybox) {
     throw std::runtime_error("[SCENE] Skybox não foi inicializado");
   }
   return *skybox;
+}
+
+const Terrain& Scene::getTerrain() const 
+{
+  if (!terrain) {
+    throw std::runtime_error("[SCENE] Terreno não foi inicializado");
+  }
+
+  return *terrain;
 }
 
 void Scene::init()
@@ -40,26 +52,11 @@ void Scene::init()
   // SKYBOX
   skybox = new Skybox("assets/skybox");
 
+  // TERRENO 
+  terrain = new Terrain("assets/heightmaps/heightmap.png", "assets/heightmaps/grass.jpg", 1025, 1025);
+
   // OBJETOS (MODELOS)
   ResourceManager& manager = ResourceManager::getInstance();
-
-  addObject(new GameObject( 
-    "obj1",
-    &manager.getShader("default"),
-    &manager.getModel("pendurador"),
-    glm::vec3(0.0f, 0.0f, 0.0f),
-    glm::vec3(0.0f),
-    glm::vec3(2.0f, 2.0f, 2.0f)
-   ));
-
-  addObject(new GameObject( 
-    "obj2",
-    &manager.getShader("default"),
-    &manager.getModel("bike"),
-    glm::vec3(2.0f, 0.0f, 5.0f),
-    glm::vec3(0.0f),
-    glm::vec3(2.0f, 2.0f, 2.0f)
-  ));
 
   addObject(new GameObject(
     "obj3",
@@ -70,19 +67,10 @@ void Scene::init()
     glm::vec3(0.01f, 0.01f, 0.01f)
   ));
 
-  addObject(new GameObject( 
-    "obj4",
-    &manager.getShader("default"),
-    &manager.getModel("pig"),
-    glm::vec3(0.0f, 0.0f, 0.0f),
-    glm::vec3(0.0f, 180.0f, 0.0f),
-    glm::vec3(1.0f)
-  ));
-
   addObject(new Billboard(
     &manager.getShader("billboard"),
     &manager.getTexture("tree"),
-    glm::vec3(1.0f, 1.0f, 2.0f),
+    glm::vec3(1.0f, 0.8f, 2.0f),
     2.0f,
     glm::vec3(1.0f),
     "TreeBillboard1"
