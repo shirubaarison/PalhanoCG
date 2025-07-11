@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 #include "engine/graphics/Renderer.hpp"
 #include "engine/core/Scene.hpp"
-#include "engine/graphics/SpriteRenderer.hpp"
+#include "engine/graphics/UI.hpp"
 #include "engine/utils/errorReporting.hpp"
 #include "engine/resources/ResourceManager.hpp"
 #include "engine/core/Window.hpp"
@@ -30,13 +30,12 @@ public:
   const Terrain& getTerrain() const;
 private:
   ResourceManager& resourceManager;
-	Window window;
-
+	
+  Window *window;
 	Player *gPlayer;
-  Renderer renderer;
-  SpriteRenderer *spriteRenderer;
-  Scene scene;
-
+  Renderer *renderer;
+  UI *ui;
+  Scene *scene;
   Terrain* terrain;
 
 	bool gIsRunning;

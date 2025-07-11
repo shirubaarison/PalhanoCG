@@ -1,30 +1,30 @@
 #include "engine/core/Game.hpp"
-#include "engine/graphics/SpriteRenderer.hpp"
+#include "engine/core/Scene.hpp"
 #include "engine/input/InputHandler.hpp"
 
 #include <iostream>
 #include <glm/glm.hpp>
 
-unsigned int WIDTH = 1280;
-unsigned int HEIGHT = 720;
+unsigned int WIDTH = 1920;
+unsigned int HEIGHT = 1080;
 const char* TITLE = "Trabalho CG";
 
 Game::Game() 
   : state(GAME_ACTIVE),
     resourceManager(ResourceManager::getInstance()),
-    window(),
     gIsRunning(false) {}
 
 bool Game::initialize()
 {
 	// Inicializar janelas
-	if (!window.initialize(WIDTH, HEIGHT, TITLE)) {
+  window = new Window();
+	if (!window->initialize(WIDTH, HEIGHT, TITLE)) {
 		std::cerr << "Erro ao inicializar Window" << std::endl;
 		return false;
 	}
 
 	// Inicializar inputs
-	InputHandler::initialize(window.getWindow());
+	InputHandler::initialize(window->getWindow());
 
 	// Carregar GLAD
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -52,14 +52,17 @@ bool Game::initialize()
 
   loadAssets();
 	
-	scene.init();
+  // Inicializar a cena 
+  scene = new Scene();
 	
+  // Inicializar UI 
+  ui = new UI(ResourceManager::getInstance().getShader("ui"), WIDTH, HEIGHT);
+
 	// Tudo certo
 	gIsRunning = true;
 
 	std::cout << "[OpenGL] OpenGL carregado com sucesso." << std::endl;
 
-  spriteRenderer = new SpriteRenderer(ResourceManager::getInstance().getShader("ui"), WIDTH, HEIGHT);
 	return true;
 }
 
@@ -76,7 +79,7 @@ void Game::run()
 	float deltaTime = 0.0f;
   float mLastFrame = 0.0f;
 	
-	while (gIsRunning && !window.windowShouldClose()) {
+	while (gIsRunning && !window->windowShouldClose()) {
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - mLastFrame;
 		mLastFrame = currentFrame;
@@ -85,20 +88,20 @@ void Game::run()
 		render();
 
 		glfwPollEvents();
-		window.swapBuffers();
+		window->swapBuffers();
 	}
 }
 
 void Game::update(float deltaTime) 
 {
   gPlayer->update(deltaTime, *terrain);
-  scene.update(deltaTime);
+  scene->update(deltaTime);
   
   if (gPlayer) {
     glm::vec3 playerMin = gPlayer->getAABBMin();
     glm::vec3 playerMax = gPlayer->getAABBMax();
 
-    const std::vector<GameObject*> sceneObjects = scene.getObjects();
+    const std::vector<GameObject*> sceneObjects = scene->getObjects();
     for (GameObject *obj : sceneObjects) {
       if (obj->isStatic) {
         continue;
@@ -146,10 +149,10 @@ void Game::update(float deltaTime)
 
 void Game::render()
 {
-  renderer.render(*terrain, scene, gPlayer->getCamera());
+  renderer->render(*terrain, *scene, gPlayer->getCamera());
 
   glDisable(GL_DEPTH_TEST);
-  spriteRenderer->drawSprite(ResourceManager::getInstance().getTexture("crosshair"), glm::vec2((WIDTH - 32.0f) / 2.0f,
+  ui->drawSprite(ResourceManager::getInstance().getTexture("crosshair"), glm::vec2((WIDTH - 32.0f) / 2.0f,
                                                                                                (HEIGHT - 32.0f) / 2.0f), glm::vec2(32.0f, 32.0f));
   glEnable(GL_DEPTH_TEST); 
 }

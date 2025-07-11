@@ -1,12 +1,13 @@
-#ifndef SPRITE_RENDERER_CLASS_H
-#define SPRITE_RENDERER_CLASS_H
+#ifndef UI_CLASS
+#define UI_CLASS
 
 #include "engine/graphics/Shader.hpp"
 #include "engine/graphics/Texture.hpp"
-class SpriteRenderer {
+
+class UI {
 public:
-  SpriteRenderer(Shader &shader, int width, int height);
-  ~SpriteRenderer();
+  UI(Shader &shader, int width, int height);
+  ~UI();
 
   void drawSprite(Texture &texture, glm::vec2 position,
                   glm::vec2 size = glm::vec2(10.0f, 10.0f),
@@ -20,4 +21,4 @@ private:
   void initRenderData();
 };
 
-#endif // !SPRITE_RENDERER_CLASS_H
+#endif // !UI_CLASS
