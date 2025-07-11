@@ -1,4 +1,5 @@
 #include "core/Renderer.hpp"
+#include "core/GameObject.hpp"
 #include "graphics/Shader.hpp"
 #include "player/Camera.hpp"
 #include "resources/ResourceManager.hpp"
@@ -12,37 +13,44 @@ void Renderer::render(const Terrain& terrain, const Scene &scene, const Camera &
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   drawTerrain(terrain, ResourceManager::getInstance().getShader("terrain"), camera);
-  
-  draw(scene.getObjects(), camera);
-
   drawSkybox(scene.getSkybox(), ResourceManager::getInstance().getShader("skybox"), camera);
+  draw(scene.getObjects(), camera);
 }
 
-void Renderer::draw(const std::vector<GameObject> &gameObjects, const Camera &camera) const
+
+void Renderer::draw(const std::vector<GameObject*> gameObjects, const Camera& camera) const
 {
-  for (const auto &obj : gameObjects)
+  for (const auto &obj: gameObjects)
   {
-    if (!obj.isActive || !obj.shader || !obj.model)
+    if (!obj->isActive || !obj->shader)
       continue;
-
-    obj.shader->use();
-
-    obj.shader->setMat4("projection", camera.getProjectionMatrix());
-    obj.shader->setMat4("view", camera.getViewMatrix());
-    obj.shader->setVec3("camPos", camera.getPosition());
-
-    obj.shader->setVec4("lightColor", glm::vec4(1.0f));
-    obj.shader->setVec3("lightPos", glm::vec3(2.0f, 10.0f, 5.0f));
-
+  
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, obj.transform.position);
-    model = glm::rotate(model, glm::radians(obj.transform.rotation.x), glm::vec3(1, 0, 0));
-    model = glm::rotate(model, glm::radians(obj.transform.rotation.y), glm::vec3(0, 1, 0));
-    model = glm::rotate(model, glm::radians(obj.transform.rotation.z), glm::vec3(0, 0, 1));
-    model = glm::scale(model, obj.transform.scale);
+    model = glm::translate(model, obj->transform.position);
+    model = glm::scale(model, obj->transform.scale);
 
-    obj.shader->setMat4("model", model);
-    obj.model->draw(*obj.shader, model);
+    obj->shader->use();
+    obj->shader->setMat4("projection", camera.getProjectionMatrix());
+    obj->shader->setMat4("view", camera.getViewMatrix());
+    obj->shader->setMat4("model", model);
+
+    // 3D
+    if (obj->objectType == ObjectType::MODEL && obj->model) {
+      model = glm::rotate(model, glm::radians(obj->transform.rotation.x), glm::vec3(1, 0, 0));
+      model = glm::rotate(model, glm::radians(obj->transform.rotation.y), glm::vec3(0, 1, 0));
+      model = glm::rotate(model, glm::radians(obj->transform.rotation.z), glm::vec3(0, 0, 1));
+      obj->shader->setVec3("camPos", camera.getPosition());
+
+      obj->shader->setVec4("lightColor", glm::vec4(1.0f));
+      obj->shader->setVec3("lightPos", glm::vec3(2.0f, 10.0f, 5.0f));
+
+      obj->model->draw(*obj->shader, model);
+    } 
+
+    // 2D
+    else if (obj->objectType == ObjectType::BILLBOARD) {
+      obj->draw();
+    }
   }
 }
 

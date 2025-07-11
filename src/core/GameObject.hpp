@@ -12,6 +12,11 @@ struct Transform {
   glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
 };
 
+enum ObjectType {
+  MODEL,
+  BILLBOARD
+};
+
 class GameObject {
 public:
   GameObject();
@@ -21,8 +26,9 @@ public:
              const glm::vec3& pos,
              const glm::vec3& rot = glm::vec3(0, 0, 0),
              const glm::vec3& scale = glm::vec3(1.0f, 1.0f, 1.0f));
-
+  
   std::string name;
+  ObjectType objectType;
   bool isActive;
 
   Transform transform;
@@ -41,6 +47,8 @@ public:
   void updatePhysics(float deltaTime);
   bool checkAABBCollision(const GameObject& other) const;
   void resolveCollision(GameObject& other);
+
+  virtual void draw() const;
 };
 
 #endif // !GAME_OBJECT_CLASS_H

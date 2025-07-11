@@ -5,7 +5,7 @@
 #include "graphics/Texture.hpp"
 class SpriteRenderer {
 public:
-  SpriteRenderer(Shader &shader);
+  SpriteRenderer(Shader &shader, int width, int height);
   ~SpriteRenderer();
 
   void drawSprite(Texture &texture, glm::vec2 position,
@@ -15,6 +15,7 @@ public:
 private:
   Shader shader;
   unsigned int quadVAO;
+  int width, height;
 
   void initRenderData();
 };

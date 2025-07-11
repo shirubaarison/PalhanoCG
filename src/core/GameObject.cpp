@@ -11,11 +11,21 @@ GameObject::GameObject(const std::string& name,
   transform.position = pos;
   transform.rotation = rot;
   transform.scale = scale;
+
+  // se tiver modelo, é 3D se não billboard
+  if (model)
+    objectType = ObjectType::MODEL; 
+  else
+    objectType = ObjectType::BILLBOARD;
+  
 }
 
-GameObject::GameObject() : isActive(true) {}
+GameObject::GameObject() : isActive(true) { this->objectType = ObjectType::MODEL; }
 
 void GameObject::updatePhysics(float deltaTime) {}
+
+// fazer isso pra funcionar os 2D
+void GameObject::draw() const {}
 
 bool GameObject::checkAABBCollision(const GameObject& other) const
 {

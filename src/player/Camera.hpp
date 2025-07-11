@@ -38,6 +38,7 @@ public:
   void processZoom(float scrollOffset);
 
   glm::vec3 position;
+  float zoom;
 private:
   int width;
   int height;
@@ -55,8 +56,6 @@ private:
 
   float yaw; 
   float pitch;
-
-  float zoom;
 
   void updateCameraVectors();
 };
