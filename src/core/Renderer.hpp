@@ -5,13 +5,14 @@
 #include "core/GameObject.hpp"
 #include "core/Scene.hpp"
 #include "player/Camera.hpp"
+#include "world/Terrain.hpp"
 
 class Renderer {
 public:
   Renderer();
   ~Renderer();
 
-  void draw(const std::vector<GameObject>& gameObjects, const Camera& camera) const;
+  void draw(const std::vector<GameObject*> gameObjects, const Camera& camera) const;
   void drawTerrain(const Terrain& terrain, Shader& shader, const Camera& camera);
   void drawSkybox(const Skybox& skybox, Shader& shader, const Camera& camera);
   void render(const Terrain& terrain, const Scene& scene, const Camera& camera);

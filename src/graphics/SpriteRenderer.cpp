@@ -1,8 +1,14 @@
 #include "graphics/SpriteRenderer.hpp"
 
-SpriteRenderer::SpriteRenderer(Shader& shader)
+SpriteRenderer::SpriteRenderer(Shader& shader, int width, int height)
 {
   this->shader = shader;
+  
+  glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f, -1.0f, 1.0f);
+  shader.use();
+  shader.setInt("image", 0);
+  shader.setMat4("projection", projection);
+
   initRenderData();
 }
 

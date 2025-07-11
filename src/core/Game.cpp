@@ -59,12 +59,7 @@ bool Game::initialize()
 
 	std::cout << "[OpenGL] OpenGL carregado com sucesso." << std::endl;
 
-  glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(WIDTH), static_cast<float>(HEIGHT), 0.0f, -1.0f, 1.0f);
-  ResourceManager::getInstance().getShader("ui").use();
-  ResourceManager::getInstance().getShader("ui").setInt("image", 0);
-  ResourceManager::getInstance().getShader("ui").setMat4("projection", projection);
-  
-  spriteRenderer = new SpriteRenderer(ResourceManager::getInstance().getShader("ui"));
+  spriteRenderer = new SpriteRenderer(ResourceManager::getInstance().getShader("ui"), WIDTH, HEIGHT);
 	return true;
 }
 
@@ -103,14 +98,14 @@ void Game::update(float deltaTime)
     glm::vec3 playerMin = gPlayer->getAABBMin();
     glm::vec3 playerMax = gPlayer->getAABBMax();
 
-    const std::vector<GameObject>& sceneObjects = scene.getObjects();
-    for (GameObject obj : sceneObjects) {
-      if (obj.isStatic) {
+    const std::vector<GameObject*> sceneObjects = scene.getObjects();
+    for (GameObject *obj : sceneObjects) {
+      if (obj->isStatic) {
         continue;
       }
 
-      glm::vec3 objMin = obj.transform.position - (obj.colliderSize * obj.transform.scale * 0.5f);
-      glm::vec3 objMax = obj.transform.position + (obj.colliderSize * obj.transform.scale * 0.5f);
+      glm::vec3 objMin = obj->transform.position - (obj->colliderSize * obj->transform.scale * 0.5f);
+      glm::vec3 objMax = obj->transform.position + (obj->colliderSize * obj->transform.scale * 0.5f);
 
       bool overlapX = (playerMax.x > objMin.x) && (playerMin.x < objMax.x);
       bool overlapY = (playerMax.y > objMin.y) && (playerMin.y < objMax.y);
@@ -153,8 +148,10 @@ void Game::render()
 {
   renderer.render(*terrain, scene, gPlayer->getCamera());
 
+  glDisable(GL_DEPTH_TEST);
   spriteRenderer->drawSprite(ResourceManager::getInstance().getTexture("crosshair"), glm::vec2((WIDTH - 32.0f) / 2.0f,
-                             (HEIGHT - 32.0f) / 2.0f), glm::vec2(32.0f, 32.0f));
+                                                                                               (HEIGHT - 32.0f) / 2.0f), glm::vec2(32.0f, 32.0f));
+  glEnable(GL_DEPTH_TEST); 
 }
 
 void Game::loadAssets()
@@ -164,6 +161,7 @@ void Game::loadAssets()
 	resourceManager.loadShader("terrain", "assets/shaders/terrain.vs.glsl", "assets/shaders/terrain.fs.glsl");
 	resourceManager.loadShader("skybox", "assets/shaders/skybox.vs.glsl", "assets/shaders/skybox.fs.glsl");
   resourceManager.loadShader("ui", "assets/shaders/sprite_ui.vs.glsl", "assets/shaders/sprite_ui.fs.glsl");
+  resourceManager.loadShader("billboard", "assets/shaders/billboard.vs.glsl", "assets/shaders/billboard.fs.glsl");
 
 	// Modelos	
 	resourceManager.loadModel("pendurador", "assets/models/pendurador/da p se pendurar.obj");
@@ -176,4 +174,6 @@ void Game::loadAssets()
 
   // Sprites para a UI
   resourceManager.loadTexture("crosshair", "assets/sprites/crosshair.png");
+
+  resourceManager.loadTexture("tree", "assets/sprites/tree.png");
 }
