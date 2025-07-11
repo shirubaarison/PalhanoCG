@@ -2,15 +2,16 @@
 #include "engine/input/InputHandler.hpp"
 #include "GLFW/glfw3.h"
 
-Player::Player() 
+Player::Player(InputHandler* input) 
   : jumpSpeed(4.0f),
-    jumpPressed(false),
-    pCamera(glm::vec3(0.0f, 1.0f, 5.0f)),
-    baseSpeed(5.0f),
-    sprintMultiplier(1.4f),
-    mouseSensitivity(0.1f),
-    firstClick(true),
-    cameraTypeTogglePressed(false) {}
+  jumpPressed(false),
+  pCamera(glm::vec3(0.0f, 1.0f, 5.0f)),
+  input(input),
+  baseSpeed(5.0f),
+  sprintMultiplier(1.4f),
+  mouseSensitivity(0.1f),
+  firstClick(true),
+  cameraTypeTogglePressed(false) {}
 
 void Player::update(float deltaTime, const Terrain& terrain)
 {
@@ -37,7 +38,7 @@ const Camera& Player::getCamera() const
 void Player::handleKeyboardInput(float deltaTime) 
 {
   float currentSpeed = baseSpeed;
-  if (InputHandler::isKeyPressed(GLFW_KEY_LEFT_CONTROL)) {
+  if (input->isKeyPressed(GLFW_KEY_LEFT_CONTROL)) {
     currentSpeed *= sprintMultiplier;
   }
   float velocity = currentSpeed * deltaTime;
@@ -47,55 +48,55 @@ void Player::handleKeyboardInput(float deltaTime)
   const glm::vec3 right = pCamera.getRight(); 
   const glm::vec3 up = pCamera.getUp();
   
-  if (InputHandler::isKeyPressed(GLFW_KEY_W)) 
+  if (input->isKeyPressed(GLFW_KEY_W)) 
     position += front * velocity; 
-  if (InputHandler::isKeyPressed(GLFW_KEY_S))
+  if (input->isKeyPressed(GLFW_KEY_S))
     position -= front * velocity;   
-  if (InputHandler::isKeyPressed(GLFW_KEY_A))
+  if (input->isKeyPressed(GLFW_KEY_A))
     position -= right * velocity;
-  if (InputHandler::isKeyPressed(GLFW_KEY_D))
+  if (input->isKeyPressed(GLFW_KEY_D))
     position += right * velocity;
   
-  if (InputHandler::isKeyPressed(GLFW_KEY_SPACE) && !jumpPressed) {
+  if (input->isKeyPressed(GLFW_KEY_SPACE) && !jumpPressed) {
     if (isOnGround) {
       this->velocity.y = jumpSpeed;   
       isOnGround = false;
     }
     jumpPressed = true;
   }
-  if (InputHandler::isKeyReleased(GLFW_KEY_SPACE)) {
+  if (input->isKeyReleased(GLFW_KEY_SPACE)) {
     jumpPressed = false;
   }
   
   if (!isAffectedByGravity) {
-    if (InputHandler::isKeyPressed(GLFW_KEY_LEFT_SHIFT))
+    if (input->isKeyPressed(GLFW_KEY_LEFT_SHIFT))
       position -= up * velocity;
   }
   
   pCamera.setPosition(position);
   
-  if (InputHandler::isKeyPressed(GLFW_KEY_C) && !cameraTypeTogglePressed) {
+  if (input->isKeyPressed(GLFW_KEY_C) && !cameraTypeTogglePressed) {
     ProjectionType currentType = pCamera.getProjectionType();
     pCamera.setProjectionType(
       currentType == ProjectionType::Perspective ? ProjectionType::Orthographic : ProjectionType::Perspective
     );
     cameraTypeTogglePressed = true;
   }
-  if (InputHandler::isKeyReleased(GLFW_KEY_C)) {
+  if (input->isKeyReleased(GLFW_KEY_C)) {
     cameraTypeTogglePressed = false;
   }
 }
 
 void Player::handleMouseInput() 
 {
-  InputHandler::setCursorMode(true);  // Always capture cursor
+  input->setCursorMode(true);  // Always capture cursor
   
   if (firstClick) {
-    InputHandler::centerCursor();
+    input->centerCursor();
     firstClick = false;
   }
   
-  glm::vec2 offset = InputHandler::getMouseOffset();
+  glm::vec2 offset = input->getMouseOffset();
   
   if (pCamera.getProjectionType() == ProjectionType::Perspective) {
     float yawOffset = offset.x * mouseSensitivity;

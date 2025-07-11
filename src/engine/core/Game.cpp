@@ -20,8 +20,11 @@ bool Game::initialize()
 		return false;
 	}
 
-	// Inicializar inputs
-	InputHandler::initialize(window->getWindow());
+	// Inicializar Inputs
+	input = new InputHandler();
+  if (!input->initialize(window->getWindow())) {
+    std::cerr << "Erro ao inicializar Input" << std::endl;
+  }
 
 	// Inicializar OpenGL
   renderer = new Renderer();
@@ -34,7 +37,7 @@ bool Game::initialize()
   loadAssets();
 	
   // Inicializar o player
-	player = new Player();
+	player = new Player(input);
 
   // Inicializar a cena 
   scene = new Scene();
@@ -49,6 +52,8 @@ void Game::shutdown()
 {
 	delete player;
 	player = nullptr;
+
+  // TODO: adicionar mais coisas
 }
 
 void Game::run()
