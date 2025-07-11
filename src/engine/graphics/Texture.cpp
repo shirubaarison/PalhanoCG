@@ -45,8 +45,8 @@ Texture::Texture(const char* imagePath, const char* texType, GLuint slot)
     stbi_image_free(data);
   }
 
-  std::cout << "Textura carregada com sucesso: " << imagePath 
-    << " (" << width << "x" << height << ", " << nrChannels << " channels)" 
+  std::cout << "[TEXTURE] Textura carregada com sucesso: " << imagePath 
+    << " (" << width << "x" << height << ", " << nrChannels << " canais)" 
     << " Tipo: " << type << std::endl;
 }
 

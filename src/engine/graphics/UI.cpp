@@ -1,6 +1,6 @@
-#include "engine/graphics/SpriteRenderer.hpp"
+#include "engine/graphics/UI.hpp"
 
-SpriteRenderer::SpriteRenderer(Shader& shader, int width, int height)
+UI::UI(Shader& shader, int width, int height)
 {
   this->shader = shader;
   
@@ -12,7 +12,7 @@ SpriteRenderer::SpriteRenderer(Shader& shader, int width, int height)
   initRenderData();
 }
 
-void SpriteRenderer::initRenderData()
+void UI::initRenderData()
 {
   unsigned int VBO;
   float vertices[] = {
@@ -41,7 +41,7 @@ void SpriteRenderer::initRenderData()
   glBindVertexArray(0);
 }
 
-void SpriteRenderer::drawSprite(Texture &texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color)
+void UI::drawSprite(Texture &texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color)
 {
   this->shader.use();
   glm::mat4 model = glm::mat4(1.0f);
