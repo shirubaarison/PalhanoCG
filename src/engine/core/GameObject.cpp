@@ -13,8 +13,10 @@ GameObject::GameObject(const std::string& name,
   transform.scale = scale;
 
   // se tiver modelo, é 3D se não billboard
-  if (model)
+  if (model) {
     objectType = ObjectType::MODEL; 
+    colliderSize = model->aabbSize;
+  }
   else
     objectType = ObjectType::BILLBOARD;
   
@@ -44,7 +46,6 @@ bool GameObject::checkAABBCollision(const GameObject& other) const
 
 void GameObject::resolveCollision(GameObject& other)
 {
-  std::cout << "hello\n";
   if (this->checkAABBCollision(other)) {
     if (this->affectedByGravity && !other.isStatic) {
       glm::vec3 penetration = glm::vec3(0.0f);
