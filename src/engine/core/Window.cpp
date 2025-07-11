@@ -1,13 +1,11 @@
 #include "engine/core/Window.hpp"
+#include "engine/utils/Globals.hpp"
 #include <iostream>
 
 Window::Window() {}
 
-bool Window::initialize(int width, int height, const char* title)
+bool Window::initialize()
 {
-	this->width = width;
-  this->height = height;
-
   if (!glfwInit()) {
 		std::cerr << "Falha ao inicializar GLFW." << std::endl;
 		return false;
@@ -19,7 +17,7 @@ bool Window::initialize(int width, int height, const char* title)
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 
-	mWindow = glfwCreateWindow(width, height, title, NULL, NULL);
+	mWindow = glfwCreateWindow(Globals::WIDTH, Globals::HEIGHT, Globals::TITLE.c_str(), NULL, NULL);
   if (mWindow == NULL) {
     std::cerr << "Falha ao criar janela GLFW." << std::endl;
     glfwTerminate();
@@ -29,7 +27,7 @@ bool Window::initialize(int width, int height, const char* title)
   glfwMakeContextCurrent(mWindow);
 
 	const auto mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	glfwSetWindowPos(mWindow, (mode->width / 2) - width / 2, (mode->height / 2) - height / 2);
+	glfwSetWindowPos(mWindow, (mode->width / 2) - Globals::WIDTH / 2, (mode->height / 2) - Globals::HEIGHT / 2);
 
 	glfwSetWindowUserPointer(mWindow, this);
 	glfwSetWindowSizeCallback(mWindow, Window::window_size_callback);
@@ -60,16 +58,6 @@ GLFWwindow* Window::getWindow() const
 void Window::swapBuffers()
 {
 	glfwSwapBuffers(mWindow);
-}
-
-int Window::getWidth()
-{
-	return width;
-}
-
-int Window::getHeight()
-{
-	return height;
 }
 
 void Window::window_size_callback(GLFWwindow* window, int width, int height)

@@ -38,7 +38,7 @@ public:
 
   // fisica
   glm::vec3 velocity = glm::vec3(0.0f);
-  glm::vec3 colliderSize = glm::vec3(1.0f); // colisao AABB
+  glm::vec3 colliderSize = glm::vec3(0.3f); // colisao AABB
 
   bool isStatic = false;
   bool affectedByGravity = false;

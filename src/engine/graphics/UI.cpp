@@ -1,13 +1,15 @@
 #include "engine/graphics/UI.hpp"
+#include "engine/resources/ResourceManager.hpp"
+#include "engine/utils/Globals.hpp"
 
-UI::UI(Shader& shader, int width, int height)
+UI::UI()
 {
-  this->shader = shader;
+  shader = &ResourceManager::getInstance().getShader("ui");
   
-  glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f, -1.0f, 1.0f);
-  shader.use();
-  shader.setInt("image", 0);
-  shader.setMat4("projection", projection);
+  glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(Globals::WIDTH), static_cast<float>(Globals::HEIGHT), 0.0f, -1.0f, 1.0f);
+  shader->use();
+  shader->setInt("image", 0);
+  shader->setMat4("projection", projection);
 
   initRenderData();
 }
@@ -43,7 +45,7 @@ void UI::initRenderData()
 
 void UI::drawSprite(Texture &texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color)
 {
-  this->shader.use();
+  this->shader->use();
   glm::mat4 model = glm::mat4(1.0f);
   model = glm::translate(model, glm::vec3(position, 0.0f));  
 
@@ -53,8 +55,8 @@ void UI::drawSprite(Texture &texture, glm::vec2 position, glm::vec2 size, float 
 
   model = glm::scale(model, glm::vec3(size, 1.0f)); 
 
-  this->shader.setMat4("model", model);
-  this->shader.setVec3("spriteColor", color);
+  this->shader->setMat4("model", model);
+  this->shader->setVec3("spriteColor", color);
 
   glActiveTexture(GL_TEXTURE0);
   texture.bind();

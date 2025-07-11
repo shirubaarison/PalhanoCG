@@ -18,7 +18,7 @@ constexpr float FAR_PLANE   =  200.0f;
 
 class Camera {
 public:
-  Camera(int width, int height, glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f));
+  Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f));
   
   glm::mat4 getProjectionMatrix() const;
   glm::mat4 getViewMatrix() const;
@@ -40,9 +40,6 @@ public:
   glm::vec3 position;
   float zoom;
 private:
-  int width;
-  int height;
-
   float nearPlane;
   float farPlane;
 

@@ -8,7 +8,7 @@ class Window {
 public:
 	Window();
 
-	bool initialize(int width, int height, const char* title);
+	bool initialize();
 	void shutdown();
 	bool windowShouldClose();
 	GLFWwindow* getWindow() const;
@@ -17,13 +17,7 @@ public:
 	// para redimensionar a janela
   static void window_size_callback(GLFWwindow* window, int width, int height);
 	void handle_window_resize(int width, int height);
-
-	int getWidth();
-	int getHeight();
 private:
-	int width;
-	int height;
-	
   GLFWwindow *mWindow;
 };
 

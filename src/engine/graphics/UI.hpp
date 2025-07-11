@@ -6,7 +6,7 @@
 
 class UI {
 public:
-  UI(Shader &shader, int width, int height);
+  UI();
   ~UI();
 
   void drawSprite(Texture &texture, glm::vec2 position,
@@ -14,9 +14,8 @@ public:
                   float rotate = 0.0f,
                   glm::vec3 color = glm::vec3(1.0f));
 private:
-  Shader shader;
+  Shader* shader;
   unsigned int quadVAO;
-  int width, height;
 
   void initRenderData();
 };
