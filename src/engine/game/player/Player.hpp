@@ -3,11 +3,12 @@
 
 #include "engine/game/world/Terrain.hpp"
 #include "engine/game/player/Camera.hpp"
+#include "engine/input/InputHandler.hpp"
 #include <glm/glm.hpp>
 
 class Player {
 public:  
-  Player();
+  Player(InputHandler* input);
 
   void update(float deltaTime, const Terrain& terrain);
 
@@ -25,7 +26,7 @@ public:
   
   Camera pCamera;
 private:
-  
+  InputHandler* input;
   float baseSpeed;
   float sprintMultiplier;
   

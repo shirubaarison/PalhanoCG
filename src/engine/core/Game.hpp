@@ -6,6 +6,7 @@
 #include "engine/graphics/Renderer.hpp"
 #include "engine/core/Scene.hpp"
 #include "engine/graphics/UI.hpp"
+#include "engine/input/InputHandler.hpp"
 #include "engine/resources/ResourceManager.hpp"
 #include "engine/core/Window.hpp"
 #include "engine/game/player/Player.hpp"
@@ -31,6 +32,7 @@ private:
   ResourceManager& resourceManager;
 	
   Window *window;
+  InputHandler *input;
 	Player *player;
   Renderer *renderer;
   UI *ui;
