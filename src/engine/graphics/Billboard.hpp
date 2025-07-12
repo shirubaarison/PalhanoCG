@@ -20,7 +20,7 @@ public:
 
   ~Billboard();
   
-  void draw() const override;
+  void draw(glm::mat4 modelMat) const override;
 
   void setTexture(Texture& texture) { this->texture = &texture; }
   void setScale(float s) { this->billboardScale = s; }

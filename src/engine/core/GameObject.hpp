@@ -49,7 +49,7 @@ public:
   bool checkAABBCollision(const GameObject& other) const;
   void resolveCollision(GameObject& other);
 
-  virtual void draw() const;
+  virtual void draw(glm::mat4 modelMat) const;
 };
 
 #endif // !GAME_OBJECT_CLASS_H
