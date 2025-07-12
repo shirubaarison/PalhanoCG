@@ -25,6 +25,17 @@ struct Material {
 };
 uniform Material material;
 
+uniform vec3 u_fogColor = vec3(0.949, 0.835, 0.659);
+uniform float u_fogDensity = 0.01;
+uniform float u_fogStart = 50.0;
+uniform float u_fogEnd = 150.0;
+
+vec3 applyFog(vec3 color, vec3 worldPos, vec3 cameraPos) {
+  float distance = length(worldPos - cameraPos);
+  float fogFactor = clamp((u_fogEnd - distance) / (u_fogEnd - u_fogStart), 0.0, 1.0);
+  return mix(u_fogColor, color, fogFactor);
+}
+
 void main() 
 {
   vec4 albedo;
@@ -67,5 +78,7 @@ void main()
   }
 
   vec3 result = (ambient + diffuse + specular) * albedo.rgb;
-  FragColor = vec4(result, albedo.a);
+  vec3 finalColor = applyFog(result, crntPos, camPos);
+
+  FragColor = vec4(finalColor, albedo.a);
 }
