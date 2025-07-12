@@ -151,10 +151,12 @@ void Game::loadAssets()
 
 	// Modelos	
   resourceManager.loadModel("casa1", "assets/models/casa1/model.obj");
+  resourceManager.loadModel("pendurador", "assets/models/pendurador/da p se pendurar.obj");
+  resourceManager.loadModel("tree", "assets/models/tree/stylized_hand-painted_tree.obj");
 
   // Sprites para a UI
   resourceManager.loadTexture("crosshair", "assets/sprites/crosshair.png");
 
   // Billboarding
-  resourceManager.loadTexture("tree", "assets/sprites/tree.png");
+  resourceManager.loadTexture("bush", "assets/sprites/bush.png");
 }
