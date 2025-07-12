@@ -76,6 +76,7 @@ void Game::run()
 
 void Game::update(float deltaTime) 
 {
+  player->pCamera.updateFrustum();
   player->update(deltaTime, scene->getTerrain());
   scene->update(deltaTime);
   
@@ -85,7 +86,7 @@ void Game::update(float deltaTime)
 
     const std::vector<GameObject*> sceneObjects = scene->getObjects();
     for (GameObject *obj : sceneObjects) {
-      if (obj->isStatic) {
+      if (obj->isStatic || !player->pCamera.isInFrustum(obj->transform.position, 5.0f)) {
         continue;
       }
 
@@ -152,11 +153,17 @@ void Game::loadAssets()
 	// Modelos	
   resourceManager.loadModel("casa1", "assets/models/casa1/model.obj");
   resourceManager.loadModel("pendurador", "assets/models/pendurador/da p se pendurar.obj");
-  resourceManager.loadModel("tree", "assets/models/tree/stylized_hand-painted_tree.obj");
+  resourceManager.loadModel("tree", "assets/models/tree/beech_tree.obj");
+  resourceManager.loadModel("grass", "assets/models/grass/grass.obj");
 
   // Sprites para a UI
   resourceManager.loadTexture("crosshair", "assets/sprites/crosshair.png");
 
   // Billboarding
-  resourceManager.loadTexture("bush", "assets/sprites/bush.png");
+  // for (int i = 1; i < 10; i++) {
+  //   resourceManager.loadTexture(
+  //     ("bush" + std::to_string(i)).c_str(), 
+  //     ("assets/sprites/P" + std::to_string(i) + ".png").c_str()
+  //   );
+  // }
 }
