@@ -79,7 +79,7 @@ void Scene::init()
     glm::vec3(4.0f)
   ));
 
-  std::srand(static_cast<unsigned>(std::time(nullptr)));
+  std::srand(0);
 
   int countX = 5;
   int countZ = 5;
@@ -92,7 +92,7 @@ void Scene::init()
 
       float worldX = x * spacing + offsetX;
       float worldZ = z * spacing + offsetZ;
-      float scale = 0.8f + static_cast<float>(std::rand()) / RAND_MAX * 0.6f;
+      float scale = 0.6f + static_cast<float>(std::rand()) / RAND_MAX * 0.1f;
 
       addObject(new GameObject(
         "tree_" + std::to_string(x) + "_" + std::to_string(z),
@@ -106,19 +106,36 @@ void Scene::init()
   }
 
   // matinho
-  for (int i = 0; i < 10; i++) {
-    float x = static_cast<float>(std::rand() % 100) / 10.0f; 
-    float z = static_cast<float>(std::rand() % 100) / 10.0f;
-    float scale = 0.3f + static_cast<float>(std::rand() % 40) / 100.0f;
+  for (int i = 0; i < 2000; i++) {
+    float x = static_cast<float>(std::rand() % 300); 
+    float z = static_cast<float>(std::rand() % 300);
+    float baseHeight = terrain->getHeight(x, z) - 0.15f;
 
-    addObject(new Billboard(
-      &manager.getShader("billboard"),
-      &manager.getTexture("bush"),
-      glm::vec3(x, 0.0f, z),
-      scale,
-      glm::vec3(1.0f),
-      "bush" + std::to_string(i)
-    ));
+    float scale = 0.3f + static_cast<float>(std::rand() % 40) / 100.0f;
+    glm::vec3 position(x, baseHeight, z);
+    glm::vec3 scaleVec(scale);
+
+    std::string namePrefix = "grass_" + std::to_string(i);
+
+    for (int j = 0; j < 3; j++) {
+      float offsetX = ((std::rand() % 10) - 5) * 0.08f;
+      float offsetZ = ((std::rand() % 10) - 5) * 0.08f;
+
+      float rotY = static_cast<float>(std::rand() % 360);
+      
+      GameObject *obj = new GameObject(
+        namePrefix + "_patch_" + std::to_string(j),
+        &manager.getShader("default"),
+        &manager.getModel("grass"),
+        glm::vec3(x + offsetX, baseHeight, z + offsetZ),
+        glm::vec3(0.0f, rotY, 0.0f),
+        scaleVec
+      );
+      
+      obj->isStatic = true;
+
+      addObject(obj); 
+    }
   }  
 
   std::cout << "[SCENE] Cena inicializada com " << std::to_string(objects.size()) << " objetos." << std::endl;
