@@ -1,6 +1,7 @@
 #ifndef GAME_OBJECT_CLASS_H
 #define GAME_OBJECT_CLASS_H
 
+#include "engine/game/world/Terrain.hpp"
 #include "engine/graphics/Shader.hpp"
 #include "engine/graphics/Model.hpp"
 #include "glm/vec3.hpp"
@@ -44,7 +45,7 @@ public:
   bool affectedByGravity = false;
   bool isOnGround = false;
 
-  void updatePhysics(float deltaTime);
+  void updatePhysics(Terrain* terrain, float deltaTime);
   bool checkAABBCollision(const GameObject& other) const;
   void resolveCollision(GameObject& other);
 

@@ -24,7 +24,7 @@ GameObject::GameObject(const std::string& name,
 
 GameObject::GameObject() : isActive(true) { this->objectType = ObjectType::MODEL; }
 
-void GameObject::updatePhysics(float deltaTime) {}
+void GameObject::updatePhysics(Terrain* terrain, float deltaTime) {}
 
 // fazer isso pra funcionar os 2D
 void GameObject::draw() const {}

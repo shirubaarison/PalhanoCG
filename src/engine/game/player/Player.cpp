@@ -89,8 +89,7 @@ void Player::handleKeyboardInput(float deltaTime)
 
 void Player::handleMouseInput() 
 {
-  input->setCursorMode(true);  // Always capture cursor
-  
+  input->setCursorMode(true);    
   if (firstClick) {
     input->centerCursor();
     firstClick = false;

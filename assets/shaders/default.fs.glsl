@@ -25,13 +25,18 @@ struct Material {
 };
 uniform Material material;
 
-void main() {
+void main() 
+{
   vec4 albedo;
   if (useDiffuseMap) {
     albedo = texture(diffuse0, TexCoords);
   } else {
     albedo = vec4(material.diffuse, 1.0);
   }
+  
+  // alpha, tava dando problema em alguns modelos
+  if (albedo.a <= 0.1)
+    discard;
 
   vec3 specularColor;
   if (useSpecularMap) {
@@ -44,21 +49,23 @@ void main() {
   vec3 lightDir = normalize(lightPos - crntPos);
   vec3 viewDir = normalize(camPos - crntPos);
 
-  // Iluminação ambiente
-  vec3 ambient = max(material.ambient, vec3(0.1)) * lightColor.rgb;
+  // Ambiente
+  vec3 ambient = min(material.ambient, 0.4) * lightColor.rgb;
 
-  // Iluminação difusa
+  // Difusa
   float diff = max(dot(norm, lightDir), 0.0);
   vec3 diffuse = diff * lightColor.rgb;
-
-  // Iluminação especular
-  vec3 specular = vec3(0.0);
   
-  vec3 reflectDir = reflect(-lightDir, norm);
-  float spec_factor = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-  specular = spec_factor * specularColor * lightColor.rgb;
+  // Especular
+  vec3 specular = vec3(0.0);
+  if (diff > 0.0) { 
+    vec3 reflectDir = reflect(-lightDir, norm);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), max(material.shininess, 1.0));
+    specular = spec * specularColor * lightColor.rgb;
+
+    specular = min(specular, vec3(1.0));
+  }
 
   vec3 result = (ambient + diffuse + specular) * albedo.rgb;
-
   FragColor = vec4(result, albedo.a);
 }

@@ -15,10 +15,18 @@ uniform mat4 projection;
 
 void main() 
 {
-  vec3 viewPos = vec3(view * vec4(crntPos, 1.0));
+  // Posição em world space
   crntPos = vec3(model * vec4(aPos, 1.0));
+
+  // Calcular normal em world space
+  mat3 normalMatrix = mat3(transpose(inverse(model)));
+  Normal = normalMatrix * aNormal;
+
+  // Normalizar aqui para garantir
+  Normal = normalize(Normal);
+
   TexCoords = aTexCoords;
-  Normal = normalize(mat3(transpose(inverse(view * model))) * aNormal); // normal no mundo global
   VertexColor = aColor;
+
   gl_Position = projection * view * vec4(crntPos, 1.0);
 }
