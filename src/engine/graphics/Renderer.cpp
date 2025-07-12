@@ -71,13 +71,14 @@ void Renderer::draw(const std::vector<GameObject*> gameObjects, const Camera& ca
 
       obj->shader->setVec4("lightColor", glm::vec4(1.0f));
       obj->shader->setVec3("lightPos", glm::vec3(10.0f, 2.0f, 10.0f));
-
-      obj->model->draw(*obj->shader, model);
+      
+      obj->draw(model);
+      // obj->model->draw(*obj->shader, model);
     } 
 
     // 2D
     else if (obj->objectType == ObjectType::BILLBOARD) {
-      obj->draw();
+      obj->draw(model);
     }
   }
 }

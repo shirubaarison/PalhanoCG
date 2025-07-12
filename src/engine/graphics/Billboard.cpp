@@ -46,7 +46,8 @@ void Billboard::initRenderData() {
   glBindVertexArray(0);
 }
 
-void Billboard::draw() const {
+void Billboard::draw(glm::mat4 modelMat) const {
+  shader->setMat4("model", modelMat);
   shader->setFloat("billboardScale", this->billboardScale);
   shader->setVec3("spriteColor", this->billboardColor);
 

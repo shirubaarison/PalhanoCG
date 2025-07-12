@@ -26,8 +26,14 @@ GameObject::GameObject() : isActive(true) { this->objectType = ObjectType::MODEL
 
 void GameObject::updatePhysics(Terrain* terrain, float deltaTime) {}
 
-// fazer isso pra funcionar os 2D
-void GameObject::draw() const {}
+void GameObject::draw(glm::mat4 modelMat) const 
+{
+  shader->setMat4("model", modelMat);
+  
+  if (model) {
+    model->draw(*shader, modelMat);
+  }
+}
 
 bool GameObject::checkAABBCollision(const GameObject& other) const
 {
