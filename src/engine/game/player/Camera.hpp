@@ -14,7 +14,7 @@ constexpr float YAW         = -90.0f;
 constexpr float PITCH       =  0.0f;
 constexpr float ZOOM        =  45.0f; 
 constexpr float NEAR_PLANE  =  0.1f;
-constexpr float FAR_PLANE   =  200.0f;
+constexpr float FAR_PLANE   =  150.0f;
 
 class Camera {
 public:
@@ -36,10 +36,14 @@ public:
 
   void processRotation(float yawOffset, float pitchOffset, bool constrainPitch = true);
   void processZoom(float scrollOffset);
+  
+  void updateFrustum();
+  bool isInFrustum(const glm::vec3& pos, float radius) const;
 
   glm::vec3 position;
   float zoom;
 private:
+  glm::vec4 frustumPlanes[6];
   float nearPlane;
   float farPlane;
 
