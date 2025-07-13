@@ -41,7 +41,10 @@ void Renderer::render(const Scene &scene, const Camera &camera)
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
   drawTerrain(scene.getTerrain(), ResourceManager::getInstance().getShader("terrain"), camera);
-  drawSkybox(scene.getSkybox(), ResourceManager::getInstance().getShader("skybox"), camera);
+
+  // apenas desenhe skybox se camera for perspectiva
+  if (camera.getProjectionType() == ProjectionType::Perspective)
+    drawSkybox(scene.getSkybox(), ResourceManager::getInstance().getShader("skybox"), camera);
   draw(scene.getObjects(), camera);
 }
 
@@ -50,7 +53,7 @@ void Renderer::draw(const std::vector<GameObject*> gameObjects, const Camera& ca
 {
   for (const auto &obj: gameObjects)
   {
-    if (!obj->isActive || !obj->shader || !camera.isInFrustum(obj->transform.position, 1.0f))
+    if (!obj->isActive || !obj->shader || !camera.isInFrustum(obj->transform.position, 5.0f))
       continue;
   
     glm::mat4 model = glm::mat4(1.0f);
