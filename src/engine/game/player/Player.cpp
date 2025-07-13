@@ -1,4 +1,5 @@
 #include "engine/game/player/Player.hpp"
+#include "engine/game/player/Camera.hpp"
 #include "engine/input/InputHandler.hpp"
 #include "GLFW/glfw3.h"
 
@@ -101,6 +102,7 @@ void Player::handleMouseInput()
     float yawOffset = offset.x * mouseSensitivity;
     float pitchOffset = -offset.y * mouseSensitivity; 
     pCamera.processRotation(yawOffset, pitchOffset);
+    pCamera.zoom = 45.0f;
   } else {
     pCamera.processZoom(offset.y * 0.05f);
   }

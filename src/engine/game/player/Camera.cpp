@@ -99,9 +99,7 @@ bool Camera::isInFrustum(const glm::vec3& pos, float radius) const
 
 void Camera::processZoom(float scrollOffset) {
     zoom -= scrollOffset;
-    if (projectionType == ProjectionType::Perspective) {
-        zoom = glm::clamp(zoom, 1.0f, 45.0f);
-    } else { // Orthographic
+    if (projectionType == ProjectionType::Orthographic) {
         zoom = glm::clamp(zoom, 1.0f, 100.0f);
     }
 }
