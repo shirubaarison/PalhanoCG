@@ -52,3 +52,5 @@ test/test_runner
 
 .cache 
 .vscode
+
+assets/models
