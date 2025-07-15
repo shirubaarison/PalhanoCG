@@ -145,11 +145,12 @@ void Game::render()
 void Game::loadAssets()
 {
 	// Shaders
-  ResourceManager::loadShader("default", "assets/shaders/default.vs.glsl", "assets/shaders/default.fs.glsl");
-	ResourceManager::loadShader("terrain", "assets/shaders/terrain.vs.glsl", "assets/shaders/terrain.fs.glsl");
-	ResourceManager::loadShader("skybox", "assets/shaders/skybox.vs.glsl", "assets/shaders/skybox.fs.glsl");
-  ResourceManager::loadShader("ui", "assets/shaders/sprite_ui.vs.glsl", "assets/shaders/sprite_ui.fs.glsl");
-  ResourceManager::loadShader("billboard", "assets/shaders/billboard.vs.glsl", "assets/shaders/billboard.fs.glsl");
+  ResourceManager::loadShader("default", "shaders/default.vs.glsl", "shaders/default.fs.glsl");
+	ResourceManager::loadShader("terrain", "shaders/terrain.vs.glsl", "shaders/terrain.fs.glsl");
+	ResourceManager::loadShader("skybox", "shaders/skybox.vs.glsl", "shaders/skybox.fs.glsl");
+  ResourceManager::loadShader("ui", "shaders/sprite_ui.vs.glsl", "shaders/sprite_ui.fs.glsl");
+  ResourceManager::loadShader("billboard", "shaders/billboard.vs.glsl", "shaders/billboard.fs.glsl");
+  ResourceManager::loadShader("debug", "shaders/debug.vs.glsl", "shaders/debug.fs.glsl");
 
 	// Modelos	
   ResourceManager::loadModel("pendurador", "assets/models/pendurador/da p se pendurar.obj");
