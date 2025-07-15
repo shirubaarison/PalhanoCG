@@ -158,7 +158,6 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
     bool skip = false;
     std::string path = this->directory + '/' + str.C_Str();
     
-    // Check if texture is already loaded
     for (unsigned int j = 0; j < textures_loaded.size(); j++) {
       if (std::strcmp(textures_loaded[j].path.data(), path.c_str()) == 0) {
         // Se ja tá carregada

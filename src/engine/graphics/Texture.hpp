@@ -13,7 +13,7 @@ public:
   GLuint unit;
   std::string path;
 
-  Texture(const char* imagePath, const char* texType, GLuint slot);
+  Texture(const char* imagePath, const char* texType, GLuint slot, GLenum wrapping = GL_REPEAT);
   Texture();
   void Delete();
 

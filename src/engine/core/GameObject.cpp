@@ -37,11 +37,11 @@ void GameObject::draw(glm::mat4 modelMat) const
 
 bool GameObject::checkAABBCollision(const GameObject& other) const
 {
-  glm::vec3 thisMin = transform.position - (colliderSize * transform.scale * 0.5f);
-  glm::vec3 thisMax = transform.position + (colliderSize * transform.scale * 0.5f);
+  glm::vec3 thisMin = transform.position - (colliderSize * transform.scale);
+  glm::vec3 thisMax = transform.position + (colliderSize * transform.scale);
 
-  glm::vec3 otherMin = other.transform.position - (other.colliderSize * other.transform.scale * 0.5f);
-  glm::vec3 otherMax = other.transform.position + (other.colliderSize * other.transform.scale * 0.5f);
+  glm::vec3 otherMin = other.transform.position - (other.colliderSize * other.transform.scale);
+  glm::vec3 otherMax = other.transform.position + (other.colliderSize * other.transform.scale);
 
   bool overlapX = (thisMax.x > otherMin.x) && (thisMin.x < otherMax.x);
   bool overlapY = (thisMax.y > otherMin.y) && (thisMin.y < otherMax.y);
@@ -57,8 +57,8 @@ void GameObject::resolveCollision(GameObject& other)
       glm::vec3 penetration = glm::vec3(0.0f);
 
       if (this->transform.position.y > other.transform.position.y) {
-        float thisBottom = this->transform.position.y - (this->colliderSize.y * this->transform.scale.y * 0.5f);
-        float otherTop = other.transform.position.y + (other.colliderSize.y * other.transform.scale.y * 0.5f);
+        float thisBottom = this->transform.position.y - (this->colliderSize.y * this->transform.scale.y);
+        float otherTop = other.transform.position.y + (other.colliderSize.y * other.transform.scale.y);
 
         if (thisBottom < otherTop) {
           penetration.y = otherTop - thisBottom;

@@ -1,12 +1,14 @@
 #ifndef MODEL_CLASS_H
 #define MODEL_CLASS_H
 
+#include "engine/graphics/Shader.hpp"
+#include "engine/graphics/Mesh.hpp"
+
+#include <GL/gl.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "engine/graphics/Shader.hpp"
-#include "engine/graphics/Mesh.hpp"
 
 class Model {
 public:

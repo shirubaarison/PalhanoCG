@@ -4,7 +4,7 @@
 
 UI::UI()
 {
-  shader = &ResourceManager::getInstance().getShader("ui");
+  shader = &ResourceManager::getShader("ui");
   
   glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(Globals::WIDTH), static_cast<float>(Globals::HEIGHT), 0.0f, -1.0f, 1.0f);
   shader->use();

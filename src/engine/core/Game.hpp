@@ -29,8 +29,6 @@ public:
 
   const Terrain& getTerrain() const;
 private:
-  ResourceManager& resourceManager;
-	
   Window *window;
   InputHandler *input;
 	Player *player;

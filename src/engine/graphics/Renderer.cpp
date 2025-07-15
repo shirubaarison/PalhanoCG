@@ -40,11 +40,11 @@ void Renderer::render(const Scene &scene, const Camera &camera)
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
-  drawTerrain(scene.getTerrain(), ResourceManager::getInstance().getShader("terrain"), camera);
+  drawTerrain(scene.getTerrain(), ResourceManager::getShader("terrain"), camera);
 
   // apenas desenhe skybox se camera for perspectiva
   if (camera.getProjectionType() == ProjectionType::Perspective)
-    drawSkybox(scene.getSkybox(), ResourceManager::getInstance().getShader("skybox"), camera);
+    drawSkybox(scene.getSkybox(), ResourceManager::getShader("skybox"), camera);
   draw(scene.getObjects(), camera);
 }
 
@@ -53,7 +53,8 @@ void Renderer::draw(const std::vector<GameObject*> gameObjects, const Camera& ca
 {
   for (const auto &obj: gameObjects)
   {
-    if (!obj->isActive || !obj->shader || !camera.isInFrustum(obj->transform.position, 5.0f))
+    // if (!obj->isActive || !obj->shader || !camera.isInFrustum(obj->transform.position, 10.0f))
+    if (!obj->isActive || !obj->shader)
       continue;
   
     glm::mat4 model = glm::mat4(1.0f);
@@ -70,19 +71,14 @@ void Renderer::draw(const std::vector<GameObject*> gameObjects, const Camera& ca
       model = glm::rotate(model, glm::radians(obj->transform.rotation.x), glm::vec3(1, 0, 0));
       model = glm::rotate(model, glm::radians(obj->transform.rotation.y), glm::vec3(0, 1, 0));
       model = glm::rotate(model, glm::radians(obj->transform.rotation.z), glm::vec3(0, 0, 1));
-      obj->shader->setVec3("camPos", camera.getPosition());
-
-      obj->shader->setVec4("lightColor", glm::vec4(1.0f));
-      obj->shader->setVec3("lightPos", glm::vec3(10.0f, 2.0f, 10.0f));
-      
-      obj->draw(model);
-      // obj->model->draw(*obj->shader, model);
     } 
 
-    // 2D
-    else if (obj->objectType == ObjectType::BILLBOARD) {
-      obj->draw(model);
-    }
+    obj->shader->setVec3("camPos", camera.getPosition());
+
+    obj->shader->setVec4("lightColor", glm::vec4(1.0f));
+    obj->shader->setVec3("lightPos", glm::vec3(50.0f, 10.0f, 20.0f));
+
+    obj->draw(model);
   }
 }
 
