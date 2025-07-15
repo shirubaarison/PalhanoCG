@@ -1,10 +1,16 @@
 #include "engine/resources/ResourceManager.hpp"
+#include <GL/gl.h>
 
 std::map<std::string, Model> ResourceManager::Models;
 std::map<std::string, Shader> ResourceManager::Shaders;
 std::map<std::string, Texture> ResourceManager::Textures;
 
-ResourceManager::ResourceManager() {}
+Model& ResourceManager::createModel(const std::string& name)
+{
+  Models[name] = Model();
+
+  return Models[name];
+}
 
 Model& ResourceManager::loadModel(const std::string& name, const std::string& path)
 {
@@ -30,9 +36,9 @@ Shader& ResourceManager::getShader(const std::string& name)
 	return Shaders[name];
 }
 
-Texture& ResourceManager::loadTexture(const std::string& name, const char* path, const char* texType, GLuint slot) 
+Texture& ResourceManager::loadTexture(const std::string& name, const char* path, GLenum wrapping, const char* texType, GLuint slot) 
 {
-	Textures[name] = Texture(path, texType, slot);
+	Textures[name] = Texture(path, texType, slot, wrapping);
 
 	return Textures[name];
 }
