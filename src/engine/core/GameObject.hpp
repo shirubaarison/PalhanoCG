@@ -18,6 +18,10 @@ enum ObjectType {
   BILLBOARD
 };
 
+struct AABB {
+  glm::vec3 min, max;
+};
+
 class GameObject {
 public:
   GameObject();
@@ -50,6 +54,11 @@ public:
   void resolveCollision(GameObject& other);
 
   virtual void draw(glm::mat4 modelMat) const;
+
+  AABB getTransformedAABB() const;
+
+  glm::vec3 getAABBMin() const;
+  glm::vec3 getAABBMax() const;
 };
 
 #endif // !GAME_OBJECT_CLASS_H

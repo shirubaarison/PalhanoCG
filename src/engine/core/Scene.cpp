@@ -26,9 +26,24 @@ const std::vector<GameObject*>& Scene::getObjects() const
 }
 
 void Scene::update(float deltaTime) {
+  static float rotationAngle = 0.0f;
   for (const auto& obj_ptr : objects) { 
     if (obj_ptr && obj_ptr->isActive) {
       obj_ptr->updatePhysics(terrain, deltaTime);
+
+      if (obj_ptr->name == "pendurador_cima") {
+
+        glm::vec3 pivotPoint = glm::vec3(53.0f, 0.6f, 3.0f);
+        rotationAngle += 45.0f * deltaTime; // Adjust speed as needed
+        if (rotationAngle >= 360.0f) rotationAngle -= 360.0f;
+        
+        obj_ptr->transform.rotation.y = rotationAngle;
+        
+        float radius = 0.1f; 
+        obj_ptr->transform.position.x = pivotPoint.x + radius * sin(glm::radians(rotationAngle));
+        obj_ptr->transform.position.z = pivotPoint.z + radius * cos(glm::radians(rotationAngle));
+        obj_ptr->transform.position.y = pivotPoint.y;  
+      }
     }
   }
 }
@@ -81,8 +96,20 @@ void Scene::init()
     glm::vec3(3.0f)
   );
 
-  cantinho->colliderSize = glm::vec3(cantinho->colliderSize.x, 0.5f, cantinho->colliderSize.z);
+  // cantinho->colliderSize = glm::vec3(cantinho->colliderSize.x, 0.5f, cantinho->colliderSize.z);
   addObject(cantinho);
+
+  cantinho = new GameObject(
+    "cantinho2",
+    &ResourceManager::getShader("default"),
+    &ResourceManager::getModel("cantinho"),
+    glm::vec3(58.0f, -0.9f, 17.0f),
+    glm::vec3(0.0f, 180.0f, 0.0f),
+    glm::vec3(3.0f)
+  );
+
+  addObject(cantinho);
+
 
   // TODO: otimizar essa desgraça   
   // Bancos
@@ -111,7 +138,7 @@ void Scene::init()
       glm::vec3(0.9f)
     );
 
-    banco->colliderSize = glm::vec3(2.0f, 0.25f, 1.0f);
+    banco->colliderSize = glm::vec3(1.0f, 0.25f, 1.5f);
     addObject(banco);
     
     banco2_pos += (i >= 3) == 0 ? + 1.5f : -1.5f;
@@ -124,7 +151,7 @@ void Scene::init()
       glm::vec3(0.9f)
     );
 
-    banco2->colliderSize = glm::vec3(2.0f, 0.25f, 1.0f);
+    banco2->colliderSize = glm::vec3(1.0f, 0.25f, 1.5f);
     addObject(banco2);
 
     addObject(new Billboard(
@@ -170,7 +197,7 @@ void Scene::init()
       glm::vec3(0.06f)
     );
 
-    coco->colliderSize = glm::vec3(2.0f, 10.0f, 2.0f);
+    coco->colliderSize = glm::vec3(1.0f, 10.0f, 1.0f);
     addObject(coco);
 
     if (i < 3) {
@@ -183,7 +210,7 @@ void Scene::init()
         glm::vec3(0.06f)
       );
 
-      coco2->colliderSize = glm::vec3(2.0f, 10.0f, 2.0f);
+      coco2->colliderSize = glm::vec3(1.0f, 10.0f, 1.0f);
       addObject(coco2); 
     }
   }
@@ -216,7 +243,72 @@ void Scene::init()
 
     addObject(obj);
   }
-  
+  // Objetos próximos ao cantinho2
+  float banco2_pos_cantinho2 = 55.5f;
+  for (int i = 0; i < 5; i++) {
+    
+    banco2_pos_cantinho2 += (i >= 3) == 0 ? - 1.5f : + 1.5f;
+    GameObject *banco = new GameObject(
+      "banco_cantinho2_" + std::to_string(i),
+      &ResourceManager::getShader("default"),
+      &ResourceManager::getModel("banco"),
+      glm::vec3(banco2_pos_cantinho2, terrain->getHeight(55.0f, 12.0f + 5 * i) + 0.4f, 12.0f + 4.7f * i),
+      glm::vec3(0.0f, -90.0f, 0.0f),
+      glm::vec3(0.9f)
+    );
+    banco->colliderSize = glm::vec3(1.0f, 0.25f, 1.5f);
+    addObject(banco);
+
+    GameObject *banco2 = new GameObject(
+      "banco2_cantinho2_" + std::to_string(i),
+      &ResourceManager::getShader("default"),
+      &ResourceManager::getModel("banco"),
+      glm::vec3(63.0f, terrain->getHeight(55.0f, 12.0f + 5 * i) + 0.4f, 12.0f + 4.7f * i),
+      glm::vec3(0.0f, 90.0f, 0.0f),
+      glm::vec3(0.9f)
+    );
+    banco2->colliderSize = glm::vec3(1.0f, 0.25f, 1.5f);
+    addObject(banco2);
+
+    addObject(new Billboard(
+      &ResourceManager::getShader("billboard"),
+      &ResourceManager::getTexture("mato" + std::to_string((i % 3) + 1)),
+      glm::vec3(59.0, 1.0f, 12.0f + 4.9 * i),
+      2.5f,
+      glm::vec3(1.0f),
+      "mato1_cantinho2_" + std::to_string(i)
+    ));
+  }
+
+  // postes próximos ao cantinho2
+  for (int i = 0; i < 20; i++) {
+    if (i < 3) {
+      addObject(new Billboard(
+        &ResourceManager::getShader("billboard"),
+        &ResourceManager::getTexture("poste"),
+        glm::vec3(57.5f, 4.2f, 14.0f + 8 * i),
+        10.0f,
+        glm::vec3(1.0f),
+        "poste_cantinho2_" + std::to_string(i)
+      ));
+    }
+  }
+
+  // coqueiros próximos ao cantinho2
+  for (int i = 0; i < 3; i++) {
+    GameObject * coco2 = new GameObject(
+      "coconut2_cantinho2_" + std::to_string(i),
+      &ResourceManager::getShader("default"),
+      &ResourceManager::getModel("coconut"),
+      glm::vec3(61.5f, terrain->getHeight(61.5f, 14.0f + 5 * i), 14.0f + 10 * i),
+      glm::vec3(0.0f),
+      glm::vec3(0.06f)
+    );
+    coco2->colliderSize = glm::vec3(1.0f, 10.0f, 1.0f);
+    addObject(coco2); 
+
+  }
+
   for (int i = 0; i < 2; i++) {
     addObject(new GameObject(
       "mesa" + std::to_string(i),
@@ -238,12 +330,12 @@ void Scene::init()
   }
 
   addObject(new GameObject(
-    "igreja",
+    "lixo",
     &ResourceManager::getShader("default"),
-    &ResourceManager::getModel("igreja"),
-    glm::vec3(35.0f, -0.5f, 60.3f),
-    glm::vec3(0.0f, 180.0f, 0.0f),
-    glm::vec3(1.0f)
+    &ResourceManager::getModel("lixo"),
+    glm::vec3(29.0f, 0.1f, 3.0f),
+    glm::vec3(0.0f),
+    glm::vec3(0.5f)
   ));
 
   addObject(new GameObject(
@@ -259,67 +351,126 @@ void Scene::init()
     "donkey",
     &ResourceManager::getShader("default"),
     &ResourceManager::getModel("burro"),
+    glm::vec3(0.0f, -0.5f, 0.0f),
     glm::vec3(0.0f, 0.0f, 0.0f),
-    glm::vec3(0.0f, 0.0f, 0.0f),
+    glm::vec3(100.0f)
+  ));
+
+ addObject(new GameObject(
+    "casa1",
+    &ResourceManager::getShader("default"),
+    &ResourceManager::getModel("casa1"),
+    glm::vec3(75.0f,terrain->getHeight(60.0f, 20.0f) + 0.25f, 20.0f),
+    glm::vec3(0.0f, 90.0f, 0.0f),
     glm::vec3(1.0f)
   ));
 
-  std::srand(0);
+ addObject(new GameObject(
+    "igreja",
+    &ResourceManager::getShader("default"),
+    &ResourceManager::getModel("igreja"),
+    glm::vec3(45.0f,terrain->getHeight(60.0f, 20.0f) - 0.2f, 45.0f),
+    glm::vec3(0.0f, 180.0f, 0.0f),
+    glm::vec3(1.0f)
+  ));
 
-  // arvores
-  // float spacing = 4.0f;
-  // for (int x = 0; x < 10; ++x) {
-  //   for (int z = 0; z < 10; ++z) {
-  //     float offsetX = (std::rand() % 200);
-  //     float offsetZ = (std::rand() % 200);
-  //
-  //     float worldX = x * spacing + offsetX;
-  //     float worldZ = z * spacing + offsetZ;
-  //     float scale = 0.6f + static_cast<float>(std::rand()) / RAND_MAX * 0.1f;
-  //
-  //     addObject(new GameObject(
-  //       "tree_" + std::to_string(x) + "_" + std::to_string(z),
-  //       &ResourceManager::getShader("default"),
-  //       &ResourceManager::getModel("tree"),
-  //       glm::vec3(worldX, terrain->getHeight(worldX, worldZ), worldZ),
-  //       glm::vec3(0.0f),
-  //       glm::vec3(scale)
-  //     ));
-  //   }
-  // }
+  addObject(new GameObject(
+    "pendurador",
+    &ResourceManager::getShader("default"),
+    &ResourceManager::getModel("pendurador"),
+    glm::vec3(53.0f, 0.6f, 3.02f),
+    glm::vec3(0.0f),
+    glm::vec3(2.0f)
+  ));
+
+  addObject(new GameObject(
+    "pendurador_cima",
+    &ResourceManager::getShader("default"),
+    &ResourceManager::getModel("pendurador_cima"),
+    glm::vec3(53.0f, -0.6f, 2.95f),
+    glm::vec3(0.0f),
+    glm::vec3(2.0f)
+  ));
+
+  addObject(new GameObject(
+    "3em1",
+    &ResourceManager::getShader("default"),
+    &ResourceManager::getModel("3em1"),
+    glm::vec3(50.0f, 0.6f, 0.0f),
+    glm::vec3(0.0f),
+    glm::vec3(2.3f)
+  ));
+
+  addObject(new GameObject(
+    "bike",
+    &ResourceManager::getShader("default"),
+    &ResourceManager::getModel("bike"),
+    glm::vec3(50.0f, 0.2f, 2.0f),
+    glm::vec3(0.0f),
+    glm::vec3(2.0f)
+  ));
+
+  addObject(new GameObject(
+    "caminhador",
+    &ResourceManager::getShader("default"),
+    &ResourceManager::getModel("caminhador"),
+    glm::vec3(55.0f, 0.5f, 0.0f),
+    glm::vec3(0.0f),
+    glm::vec3(2.0f)
+  ));
+
+  addObject(new GameObject(
+    "churrasqueira",
+    &ResourceManager::getShader("default"),
+    &ResourceManager::getModel("churrasqueira"),
+    glm::vec3(55.0f, -0.1f, 34.0f),
+    glm::vec3(0.0f),
+    glm::vec3(1.0f)
+  ));
+
+  addObject(new GameObject(
+    "sedan",
+    &ResourceManager::getShader("default"),
+    &ResourceManager::getModel("sedan"),
+    glm::vec3(10.0f, 0.2f, 10.0f),
+    glm::vec3(0.0f, -90.0f, 0.0f),
+    glm::vec3(1.0f)
+  ));
+
 
   // matinho
-  // for (int i = 0; i < 2000; i++) {
-  //   float x = static_cast<float>(std::rand() % 300); 
-  //   float z = static_cast<float>(std::rand() % 300);
-  //   float baseHeight = terrain->getHeight(x, z) - 0.15f;
-  //
-  //   float scale = 0.3f + static_cast<float>(std::rand() % 40) / 100.0f;
-  //   glm::vec3 position(x, baseHeight, z);
-  //   glm::vec3 scaleVec(scale);
-  //
-  //   std::string namePrefix = "grass_" + std::to_string(i);
-  //
-  //   for (int j = 0; j < 5; j++) {
-  //     float offsetX = ((std::rand() % 10) - 5) * 0.08f;
-  //     float offsetZ = ((std::rand() % 10) - 5) * 0.08f;
-  //
-  //     float rotY = static_cast<float>(std::rand() % 360);
-  //
-  //     GameObject *obj = new GameObject(
-  //       namePrefix + "_patch_" + std::to_string(j),
-  //       &ResourceManager::getShader("default"),
-  //       &ResourceManager::getModel("grass"),
-  //       glm::vec3(x + offsetX, baseHeight, z + offsetZ),
-  //       glm::vec3(0.0f, rotY, 0.0f),
-  //       scaleVec
-  //     );
-  //
-  //     obj->isStatic = true;
-  //
-  //     addObject(obj); 
-  //   }
-  // }  
-  //
+  std::srand(0);
+  for (int i = 0; i < 100; i++) {
+    float x = static_cast<float>(std::rand() % 50); 
+    float z = static_cast<float>(std::rand() % 50);
+    float baseHeight = terrain->getHeight(x, z) - 0.15f;
+
+    float scale = 0.4f + static_cast<float>(std::rand() % 40) / 100.0f;
+    glm::vec3 position(x, baseHeight, z);
+    glm::vec3 scaleVec(scale);
+
+    std::string namePrefix = "grass_" + std::to_string(i);
+
+    for (int j = 0; j < 3; j++) {
+      float offsetX = ((std::rand() % 10) - 5) * 0.08f;
+      float offsetZ = ((std::rand() % 10) - 5) * 0.08f;
+
+      float rotY = static_cast<float>(std::rand() % 360);
+
+      GameObject *obj = new GameObject(
+        namePrefix + "_patch_" + std::to_string(j),
+        &ResourceManager::getShader("default"),
+        &ResourceManager::getModel("grass"),
+        glm::vec3(x + offsetX, baseHeight, z + offsetZ),
+        glm::vec3(0.0f, rotY, 0.0f),
+        scaleVec
+      );
+
+      obj->isStatic = true;
+
+      addObject(obj); 
+    }
+  }  
+
   std::cout << "[SCENE] Cena inicializada com " << std::to_string(objects.size()) << " objetos." << std::endl;
 }

@@ -1,4 +1,5 @@
 #include "engine/core/GameObject.hpp"
+#include <cstddef>
 
 GameObject::GameObject(const std::string& name,
                        Shader* shader,
@@ -13,8 +14,8 @@ GameObject::GameObject(const std::string& name,
   transform.scale = scale;
 
   // se tiver modelo, é 3D se não billboard
-  if (model) {
-    objectType = ObjectType::MODEL; 
+  if (model != NULL) {
+    objectType = ObjectType::MODEL;
     colliderSize = model->aabbSize;
   }
   else
@@ -72,4 +73,50 @@ void GameObject::resolveCollision(GameObject& other)
       }
     }
   }
+}
+
+AABB GameObject::getTransformedAABB() const
+{
+  if (!model) return {transform.position, transform.position};
+
+  glm::mat4 modelMatrix = glm::mat4(1.0f);
+  modelMatrix = glm::translate(modelMatrix, transform.position);
+  modelMatrix = glm::rotate(modelMatrix, transform.rotation.x, glm::vec3(1, 0, 0));
+  modelMatrix = glm::rotate(modelMatrix, transform.rotation.y, glm::vec3(0, 1, 0));
+  modelMatrix = glm::rotate(modelMatrix, transform.rotation.z, glm::vec3(0, 0, 1));
+  modelMatrix = glm::scale(modelMatrix, transform.scale);
+
+  glm::vec3 corners[8] = {
+    {model->aabbMin.x, model->aabbMin.y, model->aabbMin.z},
+    {model->aabbMax.x, model->aabbMin.y, model->aabbMin.z},
+    {model->aabbMin.x, model->aabbMax.y, model->aabbMin.z},
+    {model->aabbMax.x, model->aabbMax.y, model->aabbMin.z},
+    {model->aabbMin.x, model->aabbMin.y, model->aabbMax.z},
+    {model->aabbMax.x, model->aabbMin.y, model->aabbMax.z},
+    {model->aabbMin.x, model->aabbMax.y, model->aabbMax.z},
+    {model->aabbMax.x, model->aabbMax.y, model->aabbMax.z}
+  };
+
+  glm::vec3 transformedMin(FLT_MAX);
+  glm::vec3 transformedMax(-FLT_MAX);
+
+  for (int i = 0; i < 8; i++) {
+    glm::vec4 transformedCorner = modelMatrix * glm::vec4(corners[i], 1.0f);
+    glm::vec3 corner3D = glm::vec3(transformedCorner);
+
+    transformedMin = glm::min(transformedMin, corner3D);
+    transformedMax = glm::max(transformedMax, corner3D);
+  }
+
+  return {transformedMin, transformedMax};
+}
+
+glm::vec3 GameObject::getAABBMin() const 
+{
+  return getTransformedAABB().min;
+}
+
+glm::vec3 GameObject::getAABBMax() const 
+{
+  return getTransformedAABB().max;
 }

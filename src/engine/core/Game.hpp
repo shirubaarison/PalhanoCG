@@ -7,7 +7,6 @@
 #include "engine/core/Scene.hpp"
 #include "engine/graphics/UI.hpp"
 #include "engine/input/InputHandler.hpp"
-#include "engine/resources/ResourceManager.hpp"
 #include "engine/core/Window.hpp"
 #include "engine/game/player/Player.hpp"
 #include "engine/game/world/Terrain.hpp"
