@@ -11,7 +11,7 @@ class Renderer {
 public:
   Renderer();
   ~Renderer();
-  
+ 
   bool init();
 
   void draw(const std::vector<GameObject*> gameObjects, const Camera& camera) const;

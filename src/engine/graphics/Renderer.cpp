@@ -6,6 +6,8 @@
 #include "engine/utils/Globals.hpp"
 #include "engine/utils/errorReporting.hpp"
 
+#include <glm/ext/matrix_transform.hpp>
+
 Renderer::Renderer() {}
 Renderer::~Renderer() {}
 
@@ -31,7 +33,7 @@ bool Renderer::init()
 
   glViewport(0, 0, Globals::WIDTH, Globals::HEIGHT);
 
-	std::cout << "[OpenGL] OpenGL carregado com sucesso." << std::endl;
+	std::cout << "[RENDERER] OpenGL carregado com sucesso." << std::endl;
   return true;
 }
 
@@ -76,7 +78,7 @@ void Renderer::draw(const std::vector<GameObject*> gameObjects, const Camera& ca
     obj->shader->setVec3("camPos", camera.getPosition());
 
     obj->shader->setVec4("lightColor", glm::vec4(1.0f));
-    obj->shader->setVec3("lightPos", glm::vec3(50.0f, 10.0f, 20.0f));
+    obj->shader->setVec3("lightPos", glm::vec3(10.0f, 30.0f, 20.0f));
 
     obj->draw(model);
   }
@@ -93,7 +95,7 @@ void Renderer::drawTerrain(const Terrain& terrain, Shader& shader, const Camera&
   
   // desabilitar o face culling pq tá bugando kkkkkkkkk
   glDisable(GL_CULL_FACE); 
-  terrain.draw(shader);
+    terrain.draw(shader);
   glEnable(GL_CULL_FACE); 
 }
 
