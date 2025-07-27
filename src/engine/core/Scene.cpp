@@ -29,8 +29,6 @@ void Scene::update(float deltaTime) {
   static float rotationAngle = 0.0f;
   for (const auto& obj_ptr : objects) { 
     if (obj_ptr && obj_ptr->isActive) {
-      obj_ptr->updatePhysics(terrain, deltaTime);
-
       if (obj_ptr->name == "pendurador_cima") {
 
         glm::vec3 pivotPoint = glm::vec3(53.0f, 0.6f, 3.0f);
@@ -84,7 +82,7 @@ void Scene::init()
     glm::vec3(0.0f),
     glm::vec3(1.0f)
   );
-  praca->colliderSize = glm::vec3(praca->colliderSize.x, 1.0f, praca->colliderSize.z);
+  praca->colliderSize = glm::vec3(praca->colliderSize.x, 1.3f, praca->colliderSize.z);
   addObject(praca);
 
   GameObject* cantinho = new GameObject(
@@ -197,7 +195,7 @@ void Scene::init()
       glm::vec3(0.06f)
     );
 
-    coco->colliderSize = glm::vec3(1.0f, 10.0f, 1.0f);
+    coco->colliderSize = glm::vec3(0.5f, 10.0f, 0.5f);
     addObject(coco);
 
     if (i < 3) {
@@ -210,7 +208,7 @@ void Scene::init()
         glm::vec3(0.06f)
       );
 
-      coco2->colliderSize = glm::vec3(1.0f, 10.0f, 1.0f);
+      coco2->colliderSize = glm::vec3(0.5f, 10.0f, 0.5f);
       addObject(coco2); 
     }
   }
@@ -304,7 +302,7 @@ void Scene::init()
       glm::vec3(0.0f),
       glm::vec3(0.06f)
     );
-    coco2->colliderSize = glm::vec3(1.0f, 10.0f, 1.0f);
+    coco2->colliderSize = glm::vec3(0.5f, 10.0f, 0.5f);
     addObject(coco2); 
 
   }

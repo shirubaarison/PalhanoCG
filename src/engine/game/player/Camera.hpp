@@ -42,6 +42,8 @@ public:
 
   glm::vec3 position;
   float zoom;
+
+  float perspectiveYaw, perspectivePitch;
 private:
   glm::vec4 frustumPlanes[6];
   float nearPlane;

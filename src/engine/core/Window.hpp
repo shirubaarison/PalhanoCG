@@ -12,7 +12,7 @@ public:
 	void shutdown();
 	bool windowShouldClose();
 	GLFWwindow* getWindow() const;
-	void swapBuffers();
+	void update();
 
 	// para redimensionar a janela
   static void window_size_callback(GLFWwindow* window, int width, int height);

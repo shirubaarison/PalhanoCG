@@ -1,5 +1,6 @@
 #include "engine/core/Game.hpp"
 #include "engine/core/Scene.hpp"
+#include "engine/game/player/Camera.hpp"
 #include "engine/graphics/Shader.hpp"
 #include "engine/input/InputHandler.hpp"
 #include "engine/utils/Globals.hpp"
@@ -23,6 +24,7 @@ bool Game::initialize()
 	input = new InputHandler();
   if (!input->initialize(window->getWindow())) {
     std::cerr << "Erro ao inicializar Input" << std::endl;
+    return false;
   }
 
 	// Inicializar OpenGL
@@ -52,7 +54,24 @@ void Game::shutdown()
 	delete player;
 	player = nullptr;
 
-  // TODO: adicionar mais coisas
+  delete player;
+  player = nullptr;
+
+  delete scene;
+  scene = nullptr;
+  
+  delete ui;
+  ui = nullptr;
+
+  delete renderer;
+  renderer = nullptr;
+
+  delete input;
+  input = nullptr;
+  
+  window->shutdown();
+  delete window;
+  window = nullptr;
 }
 
 void Game::run()
@@ -68,69 +87,14 @@ void Game::run()
 		update(deltaTime);
 		render();
 
-		glfwPollEvents();
-		window->swapBuffers();
+		window->update();
 	}
 }
 
 void Game::update(float deltaTime) 
 {
-  player->pCamera.updateFrustum();
-  player->update(deltaTime, scene->getTerrain());
+  player->update(deltaTime, scene->getTerrain(), scene->getObjects());
   scene->update(deltaTime);
-  
-  if (player) {
-    glm::vec3 playerMin = player->getAABBMin();
-    glm::vec3 playerMax = player->getAABBMax();
-    const std::vector<GameObject*> sceneObjects = scene->getObjects();
-
-    for (GameObject* obj : sceneObjects) {
-      if (obj->isStatic)
-        continue;
-
-      glm::vec3 objMin = obj->getAABBMin();
-      glm::vec3 objMax = obj->getAABBMax();
-
-      bool overlapX = (playerMax.x > objMin.x) && (playerMin.x < objMax.x);
-      bool overlapY = (playerMax.y > objMin.y) && (playerMin.y < objMax.y);
-      bool overlapZ = (playerMax.z > objMin.z) && (playerMin.z < objMax.z);
-
-      if (overlapX && overlapY && overlapZ) {
-        float overlapX_depth = std::min(playerMax.x, objMax.x) - std::max(playerMin.x, objMin.x);
-        float overlapY_depth = std::min(playerMax.y, objMax.y) - std::max(playerMin.y, objMin.y);
-        float overlapZ_depth = std::min(playerMax.z, objMax.z) - std::max(playerMin.z, objMin.z);
-
-        glm::vec3 playerPos = player->pCamera.getPosition();
-
-        if (overlapX_depth < overlapY_depth && overlapX_depth < overlapZ_depth) {
-          if (playerMin.x < objMin.x)
-            playerPos.x -= overlapX_depth;
-          else
-            playerPos.x += overlapX_depth;
-          player->velocity.x = 0.0f;
-        } 
-        else if (overlapY_depth < overlapX_depth && overlapY_depth < overlapZ_depth) {
-          if (playerMin.y < objMin.y)
-            playerPos.y -= overlapY_depth;
-          else {
-            playerPos.y += overlapY_depth;
-            player->isOnGround = true;
-          }
-          player->velocity.y = 0.0f;
-        } 
-        else {
-          if (playerMin.z < objMin.z)
-            playerPos.z -= overlapZ_depth;
-          else
-            playerPos.z += overlapZ_depth;
-          player->velocity.z = 0.0f;
-        }
-
-        // Aplique a nova posição ao jogador
-        player->pCamera.setPosition(playerPos);
-      }
-    }
-  }
 }
 
 void Game::render()
@@ -139,10 +103,7 @@ void Game::render()
   renderer->render(*scene, player->getCamera());
 
   // UI
-  glDisable(GL_DEPTH_TEST);
-    ui->drawSprite(ResourceManager::getTexture("crosshair"), glm::vec2((Globals::WIDTH - 32.0f) / 2.0f, (Globals::HEIGHT - 32.0f) / 2.0f), glm::vec2(32.0f, 32.0f));
-    ui->drawSprite(ResourceManager::getTexture("mao"), glm::vec2(Globals::WIDTH - 256.0f, (Globals::HEIGHT - 200.0f)), glm::vec2(256.0f, 256.0f), 150.0f);
-  glEnable(GL_DEPTH_TEST); 
+  ui->render(player->pCamera.getProjectionType());
 }
 
 void Game::loadAssets()
@@ -167,7 +128,6 @@ void Game::loadAssets()
   ResourceManager::loadModel("mesa", "assets/models/mesa/stone_table_01.obj");
   ResourceManager::loadModel("parada_bus", "assets/models/bus_stop/brazilian_bus_stop.obj");
   ResourceManager::loadModel("burro", "assets/models/burro/donkey.obj");
-
   ResourceManager::loadModel("casa1", "assets/models/psx_house/psx_house.obj");
   ResourceManager::loadModel("igreja", "assets/models/psx_abandoned_church/psx_abandoned_church.obj");
   ResourceManager::loadModel("3em1", "assets/models/3em1/3 em 1.obj"); 
@@ -181,6 +141,7 @@ void Game::loadAssets()
   // Sprites para a UI
   ResourceManager::loadTexture("crosshair", "assets/sprites/crosshair.png");
   ResourceManager::loadTexture("mao", "assets/sprites/steve-hand.png");
+  ResourceManager::loadTexture("player", "assets/sprites/player.png");
 
   // Billboards
   ResourceManager::loadTexture("poste", "assets/sprites/poste.png");

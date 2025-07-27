@@ -1,4 +1,5 @@
 #include "engine/core/Window.hpp"
+#include "GLFW/glfw3.h"
 #include "engine/utils/Globals.hpp"
 #include <iostream>
 
@@ -55,9 +56,10 @@ GLFWwindow* Window::getWindow() const
 	return mWindow;
 }
 
-void Window::swapBuffers()
+void Window::update()
 {
-	glfwSwapBuffers(mWindow);
+	glfwPollEvents();
+  glfwSwapBuffers(mWindow);
 }
 
 void Window::window_size_callback(GLFWwindow* window, int width, int height)

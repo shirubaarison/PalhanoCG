@@ -1,4 +1,5 @@
 #include "engine/game/player/Player.hpp"
+#include "engine/core/GameObject.hpp"
 #include "engine/game/player/Camera.hpp"
 #include "engine/input/InputHandler.hpp"
 #include "GLFW/glfw3.h"
@@ -14,11 +15,19 @@ Player::Player(InputHandler* input)
   firstClick(true),
   cameraTypeTogglePressed(false) {}
 
-void Player::update(float deltaTime, const Terrain& terrain)
+void Player::update(float deltaTime, const Terrain& terrain, std::vector<GameObject*> sceneObjects)
 {
   handleKeyboardInput(deltaTime);
   handleMouseInput();
   applyPhysics(deltaTime, terrain);
+  pCamera.updateFrustum();
+
+  for (GameObject* obj : sceneObjects) {
+    if (obj->isStatic)
+      continue;
+
+    doCollision(*obj);
+  }
 }
 
 glm::vec3 Player::getAABBMin() const
@@ -47,7 +56,6 @@ void Player::handleKeyboardInput(float deltaTime)
   glm::vec3 position = pCamera.getPosition();
   const glm::vec3 front = pCamera.getFront();
   const glm::vec3 right = pCamera.getRight(); 
-  const glm::vec3 up = pCamera.getUp();
   
   if (input->isKeyPressed(GLFW_KEY_W)) 
     position += front * velocity; 
@@ -67,11 +75,6 @@ void Player::handleKeyboardInput(float deltaTime)
   }
   if (input->isKeyReleased(GLFW_KEY_SPACE)) {
     jumpPressed = false;
-  }
-  
-  if (!isAffectedByGravity) {
-    if (input->isKeyPressed(GLFW_KEY_LEFT_SHIFT))
-      position -= up * velocity;
   }
   
   pCamera.setPosition(position);
@@ -110,12 +113,10 @@ void Player::handleMouseInput()
 
 void Player::applyPhysics(float deltaTime, const Terrain& terrain)
 {
-  isOnGround = false;
   const glm::vec3 GRAVITY = glm::vec3(0.0f, -9.81f, 0.0f);
+  isOnGround = false;
   
-  if (isAffectedByGravity) {
-    velocity += GRAVITY * deltaTime;
-  }
+  velocity += GRAVITY * deltaTime;
   
   glm::vec3 currentPosition = pCamera.getPosition();
   currentPosition += velocity * deltaTime;
@@ -133,4 +134,51 @@ void Player::applyPhysics(float deltaTime, const Terrain& terrain)
   }
   
   pCamera.setPosition(currentPosition);
+}
+
+void Player::doCollision(const GameObject& obj)
+{
+  glm::vec3 playerMin = getAABBMin();
+  glm::vec3 playerMax = getAABBMax();
+  glm::vec3 objMin = obj.getAABBMin();
+  glm::vec3 objMax = obj.getAABBMax();
+
+  bool overlapX = (playerMax.x > objMin.x) && (playerMin.x < objMax.x);
+  bool overlapY = (playerMax.y > objMin.y) && (playerMin.y < objMax.y);
+  bool overlapZ = (playerMax.z > objMin.z) && (playerMin.z < objMax.z);
+
+  // Colisao
+  if (overlapX && overlapY && overlapZ) {
+    float overlapX_depth = std::min(playerMax.x, objMax.x) - std::max(playerMin.x, objMin.x);
+    float overlapY_depth = std::min(playerMax.y, objMax.y) - std::max(playerMin.y, objMin.y);
+    float overlapZ_depth = std::min(playerMax.z, objMax.z) - std::max(playerMin.z, objMin.z);
+
+    glm::vec3 playerPos = pCamera.getPosition();
+
+    if (overlapX_depth < overlapY_depth && overlapX_depth < overlapZ_depth) {
+      if (playerMin.x < objMin.x)
+        playerPos.x -= overlapX_depth;
+      else
+        playerPos.x += overlapX_depth;
+      velocity.x = 0.0f;
+    } 
+    else if (overlapY_depth < overlapX_depth && overlapY_depth < overlapZ_depth) {
+      if (playerMin.y < objMin.y)
+        playerPos.y -= overlapY_depth;
+      else {
+        playerPos.y += overlapY_depth;
+        isOnGround = true;
+      }
+      velocity.y = 0.0f;
+    } 
+    else {
+      if (playerMin.z < objMin.z)
+        playerPos.z -= overlapZ_depth;
+      else
+        playerPos.z += overlapZ_depth;
+      velocity.z = 0.0f;
+    }
+
+    pCamera.setPosition(playerPos);
+  }
 }

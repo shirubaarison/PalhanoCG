@@ -41,17 +41,9 @@ public:
   Shader* shader;
   Model* model;
 
-  // fisica
-  glm::vec3 velocity = glm::vec3(0.0f);
   glm::vec3 colliderSize = glm::vec3(0.3f); // colisao AABB
 
   bool isStatic = false;
-  bool affectedByGravity = false;
-  bool isOnGround = false;
-
-  void updatePhysics(Terrain* terrain, float deltaTime);
-  bool checkAABBCollision(const GameObject& other) const;
-  void resolveCollision(GameObject& other);
 
   virtual void draw(glm::mat4 modelMat) const;
 

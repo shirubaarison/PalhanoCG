@@ -1,4 +1,5 @@
 #include "engine/graphics/UI.hpp"
+#include "engine/game/player/Camera.hpp"
 #include "engine/resources/ResourceManager.hpp"
 #include "engine/utils/Globals.hpp"
 
@@ -64,4 +65,25 @@ void UI::drawSprite(Texture &texture, glm::vec2 position, glm::vec2 size, float 
   glBindVertexArray(this->quadVAO);
   glDrawArrays(GL_TRIANGLES, 0, 6);
   glBindVertexArray(0);
+}
+
+void UI::render(ProjectionType type)
+{
+  glDisable(GL_DEPTH_TEST);
+  if (type == ProjectionType::Perspective) 
+  {
+    drawSprite(ResourceManager::getTexture("crosshair"), 
+                   glm::vec2((Globals::WIDTH - 32.0f) / 2.0f, (Globals::HEIGHT - 32.0f) / 2.0f),
+                   glm::vec2(32.0f, 32.0f));
+    drawSprite(ResourceManager::getTexture("mao"),
+                   glm::vec2(Globals::WIDTH - 256.0f, (Globals::HEIGHT - 200.0f)),
+                   glm::vec2(256.0f, 256.0f), 150.0f);
+  } 
+  else 
+  {
+    drawSprite(ResourceManager::getTexture("player"), 
+                   glm::vec2((Globals::WIDTH - 50.0f) / 2.0f, (Globals::HEIGHT - 50.0f) / 2.0f),
+                   glm::vec2(50.0f, 50.0f), 180.0f);
+  }
+  glEnable(GL_DEPTH_TEST); 
 }
