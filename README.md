@@ -1,5 +1,18 @@
 # Trabalho CG 2025.1 
-
-Depois adiciono instruções de como compilar e executar.
+Trabalho da disciplina de Computação Gráfica 2025.1 da UFC Campus Russas. O trabalho trata-se de um cenário parecido com a vida real, no caso desse uma praça localizada na cidade de Palhano Ceará.
 
 Precisa baixar e colocar a pasta assets/ na raíz do diretório. Quando estiver tudo pronto eu coloco o link aqui :)
+
+## Como executar: 
+```bash
+cmake -B build
+chmod +x ./run.sh
+./run.sh
+```
+
+## Fotos
+![foto01](./screenshots/1.png)
+![foto02](./screenshots/2.png)
+![foto03](./screenshots/3.png)
+![foto04](./screenshots/4.png)
+![foto05](./screenshots/5.png)
