@@ -36,10 +36,20 @@ void GameObject::draw(glm::mat4 modelMat) const
 
 AABB GameObject::getTransformedAABB() const
 {
+  if (!model) {
+    glm::vec3 halfSize = (colliderSize * transform.scale) * 0.5f;
+    glm::vec3 min = transform.position - halfSize;
+    glm::vec3 max = transform.position + halfSize;
+    return { min, max };
+  }
+
+  glm::vec3 modelCenter = model->aabbCenter;
   glm::vec3 halfSize = (colliderSize * transform.scale) * 0.5f;
-  glm::vec3 min = transform.position - halfSize;
-  glm::vec3 max = transform.position + halfSize;
-  
+  glm::vec3 worldCenter = transform.position + (modelCenter * transform.scale);
+
+  glm::vec3 min = worldCenter - halfSize;
+  glm::vec3 max = worldCenter + halfSize;  
+
   return { min, max };
 }
 

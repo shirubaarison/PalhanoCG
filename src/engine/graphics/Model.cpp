@@ -18,6 +18,9 @@ void Model::draw(Shader& shader, glm::mat4 model)
 
 void Model::loadModel(const std::string& path)
 {
+  aabbMin = glm::vec3(FLT_MAX);
+  aabbMax = glm::vec3(-FLT_MAX);
+
   Assimp::Importer import;
   const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate);
 

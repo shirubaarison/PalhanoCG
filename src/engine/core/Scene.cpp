@@ -74,18 +74,16 @@ void Scene::init()
   // OBJETOS (MODELOS)
   
   // Praça
-  GameObject *praca = new GameObject(
+  addObject(new GameObject(
     "plaza",
     &ResourceManager::getShader("default"),
     &ResourceManager::getModel("plaza"),
     glm::vec3(28.6f, -1.75f, 20.0f),
     glm::vec3(0.0f),
     glm::vec3(1.0f)
-  );
-  praca->colliderSize = glm::vec3(praca->colliderSize.x, 1.3f, praca->colliderSize.z);
-  addObject(praca);
+  ));
 
-  GameObject* cantinho = new GameObject(
+  GameObject* cantinho1 = new GameObject(
     "cantinho",
     &ResourceManager::getShader("default"),
     &ResourceManager::getModel("cantinho"),
@@ -93,11 +91,9 @@ void Scene::init()
     glm::vec3(0.0f),
     glm::vec3(3.0f)
   );
+  addObject(cantinho1);
 
-  // cantinho->colliderSize = glm::vec3(cantinho->colliderSize.x, 0.5f, cantinho->colliderSize.z);
-  addObject(cantinho);
-
-  cantinho = new GameObject(
+  GameObject* cantinho2 = new GameObject(
     "cantinho2",
     &ResourceManager::getShader("default"),
     &ResourceManager::getModel("cantinho"),
@@ -106,9 +102,7 @@ void Scene::init()
     glm::vec3(3.0f)
   );
 
-  addObject(cantinho);
-
-
+  addObject(cantinho2);
   // TODO: otimizar essa desgraça   
   // Bancos
   float banco2_pos = 27.0f;
@@ -121,8 +115,8 @@ void Scene::init()
       &ResourceManager::getShader("default"),
       &ResourceManager::getModel("sidewalk"),
       glm::vec3(18.0f, -0.26f, 7.8f * i),
-      glm::vec3(-0.2f, rot, 0.0f),  // rotação
-      glm::vec3(1.0f, 1.0f, 1.0f)   // escala padrão (ajuste conforme necessário)
+      glm::vec3(-0.2f, rot, 0.0f), 
+      glm::vec3(1.0f)
     );
     sidewalk->isStatic = true;
     addObject(sidewalk);
@@ -135,8 +129,6 @@ void Scene::init()
       glm::vec3(0.0f, -90.0f, 0.0f),
       glm::vec3(0.9f)
     );
-
-    banco->colliderSize = glm::vec3(1.0f, 0.25f, 1.5f);
     addObject(banco);
     
     banco2_pos += (i >= 3) == 0 ? + 1.5f : -1.5f;
@@ -148,8 +140,6 @@ void Scene::init()
       glm::vec3(0.0f, -270.0f, 0.0f),
       glm::vec3(0.9f)
     );
-
-    banco2->colliderSize = glm::vec3(1.0f, 0.25f, 1.5f);
     addObject(banco2);
 
     addObject(new Billboard(
@@ -194,8 +184,6 @@ void Scene::init()
       glm::vec3(0.0f),
       glm::vec3(0.06f)
     );
-
-    coco->colliderSize = glm::vec3(0.5f, 10.0f, 0.5f);
     addObject(coco);
 
     if (i < 3) {
@@ -241,6 +229,7 @@ void Scene::init()
 
     addObject(obj);
   }
+
   // Objetos próximos ao cantinho2
   float banco2_pos_cantinho2 = 55.5f;
   for (int i = 0; i < 5; i++) {
@@ -254,7 +243,6 @@ void Scene::init()
       glm::vec3(0.0f, -90.0f, 0.0f),
       glm::vec3(0.9f)
     );
-    banco->colliderSize = glm::vec3(1.0f, 0.25f, 1.5f);
     addObject(banco);
 
     GameObject *banco2 = new GameObject(
@@ -265,7 +253,6 @@ void Scene::init()
       glm::vec3(0.0f, 90.0f, 0.0f),
       glm::vec3(0.9f)
     );
-    banco2->colliderSize = glm::vec3(1.0f, 0.25f, 1.5f);
     addObject(banco2);
 
     addObject(new Billboard(
@@ -302,7 +289,6 @@ void Scene::init()
       glm::vec3(0.0f),
       glm::vec3(0.06f)
     );
-    coco2->colliderSize = glm::vec3(0.5f, 10.0f, 0.5f);
     addObject(coco2); 
 
   }

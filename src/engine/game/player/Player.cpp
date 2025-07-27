@@ -147,7 +147,6 @@ void Player::doCollision(const GameObject& obj)
   bool overlapY = (playerMax.y > objMin.y) && (playerMin.y < objMax.y);
   bool overlapZ = (playerMax.z > objMin.z) && (playerMin.z < objMax.z);
 
-  // Colisao
   if (overlapX && overlapY && overlapZ) {
     float overlapX_depth = std::min(playerMax.x, objMax.x) - std::max(playerMin.x, objMin.x);
     float overlapY_depth = std::min(playerMax.y, objMax.y) - std::max(playerMin.y, objMin.y);
@@ -156,26 +155,44 @@ void Player::doCollision(const GameObject& obj)
     glm::vec3 playerPos = pCamera.getPosition();
 
     if (overlapX_depth < overlapY_depth && overlapX_depth < overlapZ_depth) {
-      if (playerMin.x < objMin.x)
+      if (playerMin.x < objMin.x) {
         playerPos.x -= overlapX_depth;
-      else
+      } else {
         playerPos.x += overlapX_depth;
+      }
       velocity.x = 0.0f;
     } 
     else if (overlapY_depth < overlapX_depth && overlapY_depth < overlapZ_depth) {
-      if (playerMin.y < objMin.y)
-        playerPos.y -= overlapY_depth;
-      else {
-        playerPos.y += overlapY_depth;
+      if (velocity.y <= 0.0f && playerMin.y >= objMax.y - overlapY_depth) {
+        // Player pulou
+        float playerHeight = playerMax.y - playerMin.y;
+        playerPos.y = objMax.y + playerHeight * 0.5f;
         isOnGround = true;
+        velocity.y = 0.0f;
       }
-      velocity.y = 0.0f;
+      else if (velocity.y > 0.0f && playerMax.y <= objMin.y + overlapY_depth) {
+        float playerHeight = playerMax.y - playerMin.y;
+        playerPos.y = objMin.y - playerHeight * 0.5f;
+        velocity.y = 0.0f;
+      }
+      else {
+        if (playerMin.y < objMin.y) {
+          playerPos.y -= overlapY_depth;
+        } else {
+          playerPos.y += overlapY_depth;
+          if (playerMin.y > objMax.y - overlapY_depth) {
+            isOnGround = true;
+          }
+        }
+        velocity.y = 0.0f;
+      }
     } 
     else {
-      if (playerMin.z < objMin.z)
+      if (playerMin.z < objMin.z) {
         playerPos.z -= overlapZ_depth;
-      else
+      } else {
         playerPos.z += overlapZ_depth;
+      }
       velocity.z = 0.0f;
     }
 
