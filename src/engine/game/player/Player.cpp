@@ -20,7 +20,6 @@ void Player::update(float deltaTime, const Terrain& terrain, std::vector<GameObj
   handleKeyboardInput(deltaTime);
   handleMouseInput();
   applyPhysics(deltaTime, terrain);
-  pCamera.updateFrustum();
 
   for (GameObject* obj : sceneObjects) {
     if (obj->isStatic)
@@ -106,8 +105,6 @@ void Player::handleMouseInput()
     float pitchOffset = -offset.y * mouseSensitivity; 
     pCamera.processRotation(yawOffset, pitchOffset);
     pCamera.zoom = 45.0f;
-  } else {
-    pCamera.processZoom(offset.y * 0.05f);
   }
 }
 
@@ -143,57 +140,38 @@ void Player::doCollision(const GameObject& obj)
   glm::vec3 objMin = obj.getAABBMin();
   glm::vec3 objMax = obj.getAABBMax();
 
-  bool overlapX = (playerMax.x > objMin.x) && (playerMin.x < objMax.x);
-  bool overlapY = (playerMax.y > objMin.y) && (playerMin.y < objMax.y);
-  bool overlapZ = (playerMax.z > objMin.z) && (playerMin.z < objMax.z);
+  bool collisionX = (playerMax.x > objMin.x) && (playerMin.x < objMax.x);
+  bool collisionY = (playerMax.y > objMin.y) && (playerMin.y < objMax.y);
+  bool collisionZ = (playerMax.z > objMin.z) && (playerMin.z < objMax.z);
 
-  if (overlapX && overlapY && overlapZ) {
-    float overlapX_depth = std::min(playerMax.x, objMax.x) - std::max(playerMin.x, objMin.x);
-    float overlapY_depth = std::min(playerMax.y, objMax.y) - std::max(playerMin.y, objMin.y);
-    float overlapZ_depth = std::min(playerMax.z, objMax.z) - std::max(playerMin.z, objMin.z);
+  // verificar colisão
+  if (collisionX && collisionY && collisionZ) {
+    float penetrationX = std::min(playerMax.x - objMin.x, objMax.x - playerMin.x);
+    float penetrationY = std::min(playerMax.y - objMin.y, objMax.y - playerMin.y);
+    float penetrationZ = std::min(playerMax.z - objMin.z, objMax.z - playerMin.z);
 
     glm::vec3 playerPos = pCamera.getPosition();
 
-    if (overlapX_depth < overlapY_depth && overlapX_depth < overlapZ_depth) {
-      if (playerMin.x < objMin.x) {
-        playerPos.x -= overlapX_depth;
-      } else {
-        playerPos.x += overlapX_depth;
-      }
-      velocity.x = 0.0f;
-    } 
-    else if (overlapY_depth < overlapX_depth && overlapY_depth < overlapZ_depth) {
-      if (velocity.y <= 0.0f && playerMin.y >= objMax.y - overlapY_depth) {
-        // Player pulou
-        float playerHeight = playerMax.y - playerMin.y;
-        playerPos.y = objMax.y + playerHeight * 0.5f;
+    if (penetrationX <= penetrationY && penetrationX <= penetrationZ) {
+      // horizontalmente
+      playerPos.x += (playerPos.x < obj.transform.position.x) ? -penetrationX : penetrationX;
+      velocity.x = 0;
+    }
+    else if (penetrationY <= penetrationZ) {
+      // verticalmente
+      if (velocity.y <= 0 && playerPos.y > obj.transform.position.y) {
+        // Player caindo 
+        playerPos.y += penetrationY;
         isOnGround = true;
-        velocity.y = 0.0f;
-      }
-      else if (velocity.y > 0.0f && playerMax.y <= objMin.y + overlapY_depth) {
-        float playerHeight = playerMax.y - playerMin.y;
-        playerPos.y = objMin.y - playerHeight * 0.5f;
-        velocity.y = 0.0f;
-      }
-      else {
-        if (playerMin.y < objMin.y) {
-          playerPos.y -= overlapY_depth;
-        } else {
-          playerPos.y += overlapY_depth;
-          if (playerMin.y > objMax.y - overlapY_depth) {
-            isOnGround = true;
-          }
-        }
-        velocity.y = 0.0f;
-      }
-    } 
-    else {
-      if (playerMin.z < objMin.z) {
-        playerPos.z -= overlapZ_depth;
       } else {
-        playerPos.z += overlapZ_depth;
+        // para baixo ou para cima
+        playerPos.y += (playerPos.y < obj.transform.position.y) ? -penetrationY : penetrationY;
       }
-      velocity.z = 0.0f;
+      velocity.y = 0;
+    }
+    else {
+      playerPos.z += (playerPos.z < obj.transform.position.z) ? -penetrationZ : penetrationZ;
+      velocity.z = 0;
     }
 
     pCamera.setPosition(playerPos);

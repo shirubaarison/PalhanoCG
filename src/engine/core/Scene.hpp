@@ -8,7 +8,6 @@
 class Scene {
 public:
   Scene();
-  ~Scene(); 
   
   void addObject(GameObject* object); 
 

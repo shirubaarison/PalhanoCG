@@ -1,15 +1,13 @@
 #include "engine/core/Game.hpp"
 #include "engine/core/Scene.hpp"
 #include "engine/game/player/Camera.hpp"
-#include "engine/graphics/Shader.hpp"
 #include "engine/input/InputHandler.hpp"
-#include "engine/utils/Globals.hpp"
 #include "engine/resources/ResourceManager.hpp"
 
 #include <iostream>
 #include <glm/glm.hpp>
 
-Game::Game() : state(GAME_ACTIVE) {}
+Game::Game() {}
 
 bool Game::initialize()
 {
@@ -136,7 +134,7 @@ void Game::loadAssets()
   ResourceManager::loadModel("lixo", "assets/models/trash_can/trash_can.obj");
   ResourceManager::loadModel("churrasqueira", "assets/models/churrasqueira/commercial_prop_for_brazilian_street_food_-_68.obj");
   ResourceManager::loadModel("caminhador", "assets/models/caminhador/caminhador.obj");
-  ResourceManager::loadModel("pendurador_cima", "assets/models/pendurador_cima/parte de cima.obj");
+  ResourceManager::loadModel("pendurador_cima", "assets/models/pendurador_cima/cima.obj");
 
   // Sprites para a UI
   ResourceManager::loadTexture("crosshair", "assets/sprites/crosshair.png");

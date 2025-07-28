@@ -20,12 +20,15 @@ void main()
 {
   texCoords = vertex.zw;
 
-  vec3 billboardCenterWorld = model[3].xyz;
+  vec3 billboardCenterWorld = model[3].xyz; // pos no mundo
   vec4 billboardCenterView = view * vec4(billboardCenterWorld, 1.0);
+
+  // sempre de frente
   vec4 finalPosView = billboardCenterView;
   finalPosView.x += vertex.x * billboardScale;
   finalPosView.y += vertex.y * billboardScale;
-
+  
+  // iluminação
   vec4 worldPos = inverse(view) * finalPosView;
   fragPos = worldPos.xyz;
 

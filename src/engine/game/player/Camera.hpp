@@ -35,17 +35,12 @@ public:
   ProjectionType getProjectionType() const;
 
   void processRotation(float yawOffset, float pitchOffset, bool constrainPitch = true);
-  void processZoom(float scrollOffset);
   
-  void updateFrustum();
-  bool isInFrustum(const glm::vec3& pos, float radius) const;
-
   glm::vec3 position;
   float zoom;
 
   float perspectiveYaw, perspectivePitch;
 private:
-  glm::vec4 frustumPlanes[6];
   float nearPlane;
   float farPlane;
 

@@ -74,30 +74,28 @@ void Terrain::loadHeightMap(const std::string& path)
 
 float Terrain::getHeight(float worldX, float worldZ) const 
 {
-  float i_float = worldX + (this->length / 2.0f);   
-  float j_float = worldZ + (this->width / 2.0f);   
-
-  i_float = glm::clamp(i_float, 0.0f, (float)this->length - 1.0f);
-  j_float = glm::clamp(j_float, 0.0f, (float)this->width - 1.0f);
+  float x = worldX + (length / 2.0f);   
+  float z = worldZ + (width / 2.0f);   
   
-  int i1 = static_cast<int>(i_float);
-  int j1 = static_cast<int>(j_float);
-  int i2 = glm::min(i1 + 1, this->length - 1);
-  int j2 = glm::min(j1 + 1, this->width - 1);
+  x = glm::clamp(x, 0.0f, (float)length - 1.0f);
+  z = glm::clamp(z, 0.0f, (float)width - 1.0f);
   
-  float fracI = i_float - i1;
-  float fracJ = j_float - j1;
+  int x1 = (int)x, z1 = (int)z;
+  int x2 = glm::min(x1 + 1, length - 1);
+  int z2 = glm::min(z1 + 1, width - 1);
   
-  float h11 = heights[i1 * this->width + j1];
-  float h12 = heights[i1 * this->width + j2];
-  float h21 = heights[i2 * this->width + j1];
-  float h22 = heights[i2 * this->width + j2];
+  float fx = x - x1;
+  float fz = z - z1;
   
-  float interpJ1 = glm::mix(h11, h12, fracJ);
-  float interpJ2 = glm::mix(h21, h22, fracJ);
-  float finalHeight = glm::mix(interpJ1, interpJ2, fracI);
+  float h1 = heights[x1 * width + z1];  // inferior-esquerdo
+  float h2 = heights[x1 * width + z2];  // inferior-direito
+  float h3 = heights[x2 * width + z1];  // superior-esquerdo
+  float h4 = heights[x2 * width + z2];  // superior-direito
   
-  return finalHeight;
+  // interpola 
+  float linha1 = glm::mix(h1, h2, fz);  
+  float linha2 = glm::mix(h3, h4, fz); 
+  return glm::mix(linha1, linha2, fx);
 }
 
 void Terrain::draw(Shader& shader) const

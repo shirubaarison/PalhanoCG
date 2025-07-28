@@ -1,5 +1,4 @@
 #include "engine/core/Scene.hpp"
-#include "engine/core/Game.hpp"
 #include "engine/game/world/Terrain.hpp"
 #include "engine/graphics/Billboard.hpp"
 #include "engine/core/GameObject.hpp"
@@ -9,11 +8,7 @@
 #include <cstdlib> 
 #include <ctime>
 
-Scene::Scene() {
-  init();
-}
-
-Scene::~Scene() {}
+Scene::Scene() { init(); }
 
 void Scene::addObject(GameObject* object)
 {
@@ -27,12 +22,13 @@ const std::vector<GameObject*>& Scene::getObjects() const
 
 void Scene::update(float deltaTime) {
   static float rotationAngle = 0.0f;
+  
   for (const auto& obj_ptr : objects) { 
     if (obj_ptr && obj_ptr->isActive) {
       if (obj_ptr->name == "pendurador_cima") {
-
+        // mover a parte de cima do pendurador
         glm::vec3 pivotPoint = glm::vec3(53.0f, 0.6f, 3.0f);
-        rotationAngle += 45.0f * deltaTime; // Adjust speed as needed
+        rotationAngle += 45.0f * deltaTime; 
         if (rotationAngle >= 360.0f) rotationAngle -= 360.0f;
         
         obj_ptr->transform.rotation.y = rotationAngle;
@@ -423,13 +419,13 @@ void Scene::init()
 
 
   // matinho
-  std::srand(0);
+  std::srand(0); // seed
   for (int i = 0; i < 100; i++) {
-    float x = static_cast<float>(std::rand() % 50); 
-    float z = static_cast<float>(std::rand() % 50);
+    float x = std::rand() % 50; 
+    float z = std::rand() % 50;
     float baseHeight = terrain->getHeight(x, z) - 0.15f;
 
-    float scale = 0.4f + static_cast<float>(std::rand() % 40) / 100.0f;
+    float scale = 0.4f + std::rand() % 40 / 100.0f;
     glm::vec3 position(x, baseHeight, z);
     glm::vec3 scaleVec(scale);
 
@@ -439,7 +435,7 @@ void Scene::init()
       float offsetX = ((std::rand() % 10) - 5) * 0.08f;
       float offsetZ = ((std::rand() % 10) - 5) * 0.08f;
 
-      float rotY = static_cast<float>(std::rand() % 360);
+      float rotY = std::rand() % 360;
 
       GameObject *obj = new GameObject(
         namePrefix + "_patch_" + std::to_string(j),

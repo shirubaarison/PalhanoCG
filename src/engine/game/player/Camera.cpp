@@ -74,42 +74,6 @@ void Camera::processRotation(float yawOffset, float pitchOffset, bool constrainP
   updateCameraVectors();
 }
 
-void Camera::updateFrustum() 
-{
-  glm::mat4 VP = getProjectionMatrix() * getViewMatrix();
-
-  frustumPlanes[0] = glm::vec4(VP[0][3] + VP[0][0], VP[1][3] + VP[1][0], VP[2][3] + VP[2][0], VP[3][3] + VP[3][0]); // Esquerda
-  frustumPlanes[1] = glm::vec4(VP[0][3] - VP[0][0], VP[1][3] - VP[1][0], VP[2][3] - VP[2][0], VP[3][3] - VP[3][0]); // Direita
-  frustumPlanes[2] = glm::vec4(VP[0][3] + VP[0][1], VP[1][3] + VP[1][1], VP[2][3] + VP[2][1], VP[3][3] + VP[3][1]); // Baixo
-  frustumPlanes[3] = glm::vec4(VP[0][3] - VP[0][1], VP[1][3] - VP[1][1], VP[2][3] - VP[2][1], VP[3][3] - VP[3][1]); // Topo
-  frustumPlanes[4] = glm::vec4(VP[0][3] + VP[0][2], VP[1][3] + VP[1][2], VP[2][3] + VP[2][2], VP[3][3] + VP[3][2]); // Near
-  frustumPlanes[5] = glm::vec4(VP[0][3] - VP[0][2], VP[1][3] - VP[1][2], VP[2][3] - VP[2][2], VP[3][3] - VP[3][2]); // Far
-
-  // normalizar
-  for (int i = 0; i < 6; ++i) {
-    float length = glm::length(glm::vec3(frustumPlanes[i]));
-    frustumPlanes[i] /= length;
-  }
-}
-
-bool Camera::isInFrustum(const glm::vec3& pos, float radius) const
-{
-  for (int i = 0; i < 6; i++) {
-    float d = glm::dot(glm::vec3(frustumPlanes[i]), pos) + frustumPlanes[i].w;
-    if (d < -radius)
-      return false;
-  }
-  return true;
-}
-
-void Camera::processZoom(float scrollOffset) 
-{
-  zoom -= scrollOffset;
-  if (projectionType == ProjectionType::Orthographic) {
-    zoom = glm::clamp(zoom, 1.0f, 100.0f);
-  }
-}
-
 void Camera::updateCameraVectors() 
 {
   glm::vec3 newFront;
@@ -138,7 +102,7 @@ void Camera::setProjectionType(ProjectionType type) {
     if (type == ProjectionType::Orthographic) {
       yaw = -45.0f;
       pitch = -30.0f;
-      zoom = 60.0f;
+      zoom = 30.0f;
     } else {
       yaw = perspectiveYaw;
       pitch = perspectivePitch;

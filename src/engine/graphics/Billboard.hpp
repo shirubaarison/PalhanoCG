@@ -18,8 +18,6 @@ public:
             const glm::vec3& color = glm::vec3(1.0f),
             const std::string& name = "Billboard");
 
-  ~Billboard();
-  
   void draw(glm::mat4 modelMat) const override;
 
   void setTexture(Texture& texture) { this->texture = &texture; }

@@ -78,7 +78,7 @@ void Renderer::draw(const std::vector<GameObject*> gameObjects, const Camera& ca
     obj->shader->setVec3("camPos", camera.getPosition());
 
     obj->shader->setVec4("lightColor", glm::vec4(1.0f));
-    obj->shader->setVec3("lightPos", glm::vec3(10.0f, 30.0f, 20.0f));
+    obj->shader->setVec3("lightPos", glm::vec3(10.0f, 10.0f, 20.0f));
 
     obj->draw(model);
   }

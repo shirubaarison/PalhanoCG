@@ -16,10 +16,6 @@ Billboard::Billboard(Shader* billboardShader, Texture* billboardTexture,
   initRenderData(); 
 }
 
-Billboard::~Billboard() {
-  glDeleteVertexArrays(1, &this->quadVAO);
-}
-
 void Billboard::initRenderData() {
   unsigned int VBO;
   float vertices[] = {

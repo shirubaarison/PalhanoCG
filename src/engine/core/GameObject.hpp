@@ -1,7 +1,6 @@
 #ifndef GAME_OBJECT_CLASS_H
 #define GAME_OBJECT_CLASS_H
 
-#include "engine/game/world/Terrain.hpp"
 #include "engine/graphics/Shader.hpp"
 #include "engine/graphics/Model.hpp"
 #include "glm/vec3.hpp"
@@ -43,7 +42,7 @@ public:
 
   glm::vec3 colliderSize = glm::vec3(0.3f); // colisao AABB
 
-  bool isStatic = false;
+  bool isStatic = false; // statico = sem colisao
 
   virtual void draw(glm::mat4 modelMat) const;
 
