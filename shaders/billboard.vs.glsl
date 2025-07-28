@@ -11,7 +11,6 @@ uniform mat4 view;
 uniform mat4 projection;
 uniform float billboardScale;
 
-// Lighting uniforms
 uniform vec4 lightColor;
 uniform vec3 lightPos;
 uniform vec3 camPos;
